@@ -49,7 +49,7 @@ export function AddIncomeForm({ onSuccess }: AddIncomeFormProps) {
           description: formData.description,
           category: formData.category,
           type: 'income',
-          date: new Date(formData.date),
+          date: new Date(formData.date || new Date().toISOString()),
           accountId: formData.accountId || null,
         }),
       })

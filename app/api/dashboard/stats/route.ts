@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { getCurrentUser } from '@/lib/auth'
-import { prisma } from '@/lib/prisma'
+import { db } from '@/lib/db'
 import type { ApiResponse } from '@/types'
 
 export async function GET() {
@@ -21,7 +21,7 @@ export async function GET() {
     }
 
     // Get all active accounts
-    const accounts = await prisma.account.findMany({
+    const accounts = await db.account.findMany({
       where: {
         userId: user.id,
         isActive: true,
@@ -29,7 +29,7 @@ export async function GET() {
     })
 
     // Calculate total balance across all accounts
-    const totalBalance = accounts.reduce((sum, account) => {
+    const totalBalance = accounts.reduce((sum: number, account: any) => {
       return sum + parseFloat(account.currentBalance.toString())
     }, 0)
 
@@ -43,7 +43,7 @@ export async function GET() {
     const lastDayOfPrevMonth = new Date(now.getFullYear(), now.getMonth(), 0)
 
     // Get current month income
-    const currentMonthIncome = await prisma.transaction.aggregate({
+    const currentMonthIncome = await db.transaction.aggregate({
       where: {
         userId: user.id,
         transactionType: 'income',
@@ -58,7 +58,7 @@ export async function GET() {
     })
 
     // Get previous month income for comparison
-    const prevMonthIncome = await prisma.transaction.aggregate({
+    const prevMonthIncome = await db.transaction.aggregate({
       where: {
         userId: user.id,
         transactionType: 'income',
@@ -73,7 +73,7 @@ export async function GET() {
     })
 
     // Get current month expenses
-    const currentMonthExpenses = await prisma.transaction.aggregate({
+    const currentMonthExpenses = await db.transaction.aggregate({
       where: {
         userId: user.id,
         transactionType: 'expense',
@@ -88,7 +88,7 @@ export async function GET() {
     })
 
     // Get previous month expenses for comparison
-    const prevMonthExpenses = await prisma.transaction.aggregate({
+    const prevMonthExpenses = await db.transaction.aggregate({
       where: {
         userId: user.id,
         transactionType: 'expense',
@@ -115,7 +115,7 @@ export async function GET() {
     const netWorth = totalBalance
 
     // Get transaction count
-    const transactionsCount = await prisma.transaction.count({
+    const transactionsCount = await db.transaction.count({
       where: { userId: user.id },
     })
 
