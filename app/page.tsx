@@ -104,22 +104,22 @@ const FEATURES = {
     ],
   },
   security: {
-    title: 'Bank-Level Security',
+    title: 'Enterprise-Grade Security',
     icon: '🔐',
     description: 'Your data is encrypted and never sold. We use industry-standard security practices',
     benefits: [
-      '256-bit AES encryption',
-      'SOC 2 Type II certified',
+      'End-to-end encryption (TLS 1.3)',
+      'Secure password hashing',
       'Two-factor authentication',
-      'Read-only bank access',
+      'Read-only bank access via Plaid',
       'No password storage',
-      'Regular security audits',
+      'Regular security updates',
     ],
     highlights: [
-      'All data encrypted in transit (TLS) and at rest (AES-256)',
-      'We never store your banking passwords—only secure API tokens',
+      'All data encrypted in transit using TLS 1.3 and at rest',
+      'We never store your banking passwords—only secure API tokens from Plaid',
       'Enable two-factor authentication for additional account security',
-      'SOC 2 Type II certified with annual third-party security audits',
+      'Read-only bank access means we cannot move money or make transactions',
     ],
   },
 };
@@ -150,7 +150,7 @@ const TESTIMONIALS = [
 const FAQ_ITEMS = [
   {
     question: 'Is my financial data secure?',
-    answer: 'Absolutely. FinanceOS uses bank-level 256-bit encryption and read-only access to your accounts. We never store your banking passwords, and we\'re SOC 2 Type II certified. Your data is encrypted both in transit and at rest, and we never sell your information to third parties.',
+    answer: 'Absolutely. FinanceOS uses industry-standard encryption (TLS 1.3) and read-only access to your accounts through Plaid. We never store your banking passwords—only secure API tokens. Your data is encrypted both in transit and at rest, and we never sell your information to third parties.',
   },
   {
     question: 'How does bank sync work?',
@@ -241,7 +241,7 @@ export default function LandingPage() {
               </Link>
             </div>
             <div className="flex flex-col items-center gap-2 text-sm text-muted-foreground">
-              <p>✓ No credit card required • ✓ Cancel anytime • ✓ Bank-level security • ✓ 4.8★ rated</p>
+              <p>✓ No credit card required • ✓ Cancel anytime • ✓ Secure & encrypted • ✓ 4.8★ rated</p>
             </div>
           </div>
         </section>
@@ -295,7 +295,7 @@ export default function LandingPage() {
             <FeatureCard
               featureKey="security"
               icon="🔐"
-              title="Bank-Level Security"
+              title="Enterprise-Grade Security"
               description="Your data is encrypted and never sold. We use industry-standard security practices"
               onClick={() => setSelectedFeature('security')}
             />
@@ -560,10 +560,10 @@ export default function LandingPage() {
             </p>
             <div className="flex items-center gap-3 text-xs text-muted-foreground">
               <span className="flex items-center gap-1">
-                <span>🔒</span> Bank-Level Security
+                <span>🔒</span> Encrypted & Secure
               </span>
               <span className="flex items-center gap-1">
-                <span>✓</span> SOC 2 Type II Certified
+                <span>✓</span> Powered by Plaid
               </span>
             </div>
           </div>
