@@ -114,7 +114,7 @@ const config: Config = {
         'slide-in-from-right': 'slide-in-from-right 0.3s ease-out',
       },
       fontFamily: {
-        sans: ['var(--font-inter)', 'system-ui', 'sans-serif'],
+        sans: ['var(--font-ibm-plex-sans)', 'system-ui', 'sans-serif'],
       },
     },
   },

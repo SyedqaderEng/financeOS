@@ -1,12 +1,13 @@
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
+import { IBM_Plex_Sans } from 'next/font/google';
 import './globals.css';
 import { ThemeProvider } from '@/components/providers/theme-provider';
 import { Toaster } from '@/components/ui/toaster';
 
-const inter = Inter({
+const ibmPlexSans = IBM_Plex_Sans({
+  weight: ['300', '400', '500', '600', '700'],
   subsets: ['latin'],
-  variable: '--font-inter',
+  variable: '--font-ibm-plex-sans',
   display: 'swap',
 });
 
@@ -71,7 +72,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={inter.variable}>
+      <body className={ibmPlexSans.variable}>
         <ThemeProvider
           attribute="class"
           defaultTheme="dark"
