@@ -1,59 +1,99 @@
 import { requireAuth } from '@/lib/auth';
 import { redirect } from 'next/navigation';
-import { Button } from '@/components/ui/button';
-import { signOut } from '@/lib/auth';
+import { Wallet, TrendingUp, TrendingDown, DollarSign } from 'lucide-react';
+import { KPICard } from '@/components/dashboard/kpi-card';
+import { CashFlowChart } from '@/components/dashboard/cash-flow-chart';
+import { RecentTransactions } from '@/components/dashboard/recent-transactions';
+import { QuickActions } from '@/components/dashboard/quick-actions';
+import { InsightsPanel } from '@/components/dashboard/insights-panel';
 
 export default async function DashboardPage() {
   let user;
-  
+
   try {
     user = await requireAuth();
   } catch {
     redirect('/login');
   }
 
+  // For Phase 3, we're showing empty states
+  // In Phase 4+, we'll fetch actual data from the API
+  const isEmpty = true;
+  const isLoading = false;
+
   return (
-    <div className="container max-w-4xl mx-auto py-12">
-      <div className="space-y-6">
-        <div>
-          <h1 className="text-4xl font-bold">Welcome to FinanceOS! 🎉</h1>
-          <p className="text-xl text-muted-foreground mt-2">
-            Hey {user.name}, you're successfully logged in!
-          </p>
+    <div className="space-y-6">
+      {/* Header */}
+      <div>
+        <h1 className="text-3xl font-bold tracking-tight">
+          Welcome back, {user.name?.split(' ')[0] || user.email}!
+        </h1>
+        <p className="text-muted-foreground mt-1">
+          Here's an overview of your financial health
+        </p>
+      </div>
+
+      {/* KPI Cards */}
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <KPICard
+          title="Total Balance"
+          value="$0.00"
+          icon={DollarSign}
+          isEmpty={isEmpty}
+          isLoading={isLoading}
+          emptyMessage="Add accounts to see your total balance"
+        />
+        <KPICard
+          title="Monthly Income"
+          value="$0.00"
+          icon={TrendingUp}
+          isEmpty={isEmpty}
+          isLoading={isLoading}
+          emptyMessage="Track income transactions"
+        />
+        <KPICard
+          title="Monthly Expenses"
+          value="$0.00"
+          icon={TrendingDown}
+          isEmpty={isEmpty}
+          isLoading={isLoading}
+          emptyMessage="Track expense transactions"
+        />
+        <KPICard
+          title="Net Worth"
+          value="$0.00"
+          icon={Wallet}
+          isEmpty={isEmpty}
+          isLoading={isLoading}
+          emptyMessage="Assets minus liabilities"
+        />
+      </div>
+
+      {/* Three-column layout */}
+      <div className="grid gap-6 lg:grid-cols-12">
+        {/* Left column - Quick Actions (hidden on mobile, shown on lg+) */}
+        <div className="hidden lg:block lg:col-span-3">
+          <QuickActions />
         </div>
 
-        <div className="bg-secondary/30 border rounded-lg p-6 space-y-4">
-          <h2 className="text-2xl font-semibold">✅ Phase 2 Complete!</h2>
-          <p className="text-muted-foreground">
-            Authentication is working! Your account details:
-          </p>
-          <ul className="space-y-2 text-sm">
-            <li>📧 <strong>Email:</strong> {user.email}</li>
-            <li>👤 <strong>Name:</strong> {user.name}</li>
-            <li>💼 <strong>Plan:</strong> {user.subscriptionPlan}</li>
-            <li>📊 <strong>Status:</strong> {user.subscriptionStatus}</li>
-          </ul>
+        {/* Middle column - Main content */}
+        <div className="lg:col-span-6 space-y-6">
+          {/* Cash Flow Chart */}
+          <CashFlowChart isEmpty={isEmpty} isLoading={isLoading} />
+
+          {/* Recent Transactions */}
+          <RecentTransactions isEmpty={isEmpty} isLoading={isLoading} />
+
+          {/* Quick Actions (mobile only) */}
+          <div className="lg:hidden">
+            <QuickActions />
+          </div>
         </div>
 
-        <div className="bg-card border rounded-lg p-6 space-y-4">
-          <h3 className="text-xl font-semibold">🚀 What's Next?</h3>
-          <p className="text-muted-foreground">Phase 3 will add:</p>
-          <ul className="list-disc list-inside space-y-2 text-sm text-muted-foreground">
-            <li>Financial accounts management</li>
-            <li>Transaction tracking</li>
-            <li>Budget creation</li>
-            <li>Analytics dashboard</li>
-          </ul>
+        {/* Right column - Insights */}
+        <div className="lg:col-span-3">
+          <InsightsPanel />
         </div>
-
-        <form action={async () => {
-          'use server';
-          await signOut({ redirectTo: '/' });
-        }}>
-          <Button type="submit" variant="outline">
-            Logout
-          </Button>
-        </form>
       </div>
     </div>
   );
