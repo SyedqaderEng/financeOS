@@ -3,13 +3,15 @@
 import { useEffect, useState } from 'react'
 import { Wallet, TrendingUp, TrendingDown, DollarSign } from 'lucide-react'
 import { KPICard } from '@/components/dashboard/kpi-card'
-import { CashFlowChart } from '@/components/dashboard/cash-flow-chart'
-import { RecentTransactions } from '@/components/dashboard/recent-transactions'
+import { CashFlowChartV2 } from '@/components/dashboard/cash-flow-chart-v2'
+import { RecentTransactionsV2 } from '@/components/dashboard/recent-transactions-v2'
 import { AccountOverviewV2 } from '@/components/dashboard/account-overview-v2'
+import { BudgetProgressV2 } from '@/components/dashboard/budget-progress-v2'
 import { CollapsiblePanel } from '@/components/dashboard/collapsible-panel'
 import { AddIncomeForm } from '@/components/forms/add-income-form'
 import { AddExpenseForm } from '@/components/forms/add-expense-form'
 import { AddAccountForm } from '@/components/forms/add-account-form'
+import { AddBudgetForm } from '@/components/forms/add-budget-form'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { PlusCircle, Receipt, TrendingUp as TrendingUpIcon } from 'lucide-react'
@@ -164,8 +166,8 @@ export function DashboardContentV2({ userName, userEmail }: DashboardContentProp
 
         {/* Center Content - Cash Flow & Transactions */}
         <div className="flex-1 space-y-6 min-w-0">
-          <CashFlowChart isEmpty={isEmpty} isLoading={loading} />
-          <RecentTransactions isEmpty={isEmpty} isLoading={loading} key={refreshKey} />
+          <CashFlowChartV2 isEmpty={isEmpty} isLoading={loading} key={refreshKey} />
+          <RecentTransactionsV2 isEmpty={isEmpty} isLoading={loading} key={refreshKey} />
 
           {/* Mobile: Show panels below on small screens */}
           <div className="lg:hidden space-y-6">
@@ -186,8 +188,12 @@ export function DashboardContentV2({ userName, userEmail }: DashboardContentProp
               <CardContent className="space-y-3">
                 <AddIncomeForm onSuccess={handleDataChange} />
                 <AddExpenseForm onSuccess={handleDataChange} />
+                <AddBudgetForm onSuccess={handleDataChange} />
               </CardContent>
             </Card>
+
+            {/* Budget Progress for Mobile */}
+            <BudgetProgressV2 isEmpty={isEmpty} isLoading={loading} key={refreshKey} />
           </div>
         </div>
 
@@ -199,8 +205,12 @@ export function DashboardContentV2({ userName, userEmail }: DashboardContentProp
               <div className="space-y-3">
                 <AddIncomeForm onSuccess={handleDataChange} />
                 <AddExpenseForm onSuccess={handleDataChange} />
+                <AddBudgetForm onSuccess={handleDataChange} />
               </div>
             </div>
+
+            {/* Budget Progress */}
+            <BudgetProgressV2 isEmpty={isEmpty} isLoading={loading} key={refreshKey} />
 
             {/* Quick Links */}
             <Card className="transition-all duration-300 hover:shadow-lg">
