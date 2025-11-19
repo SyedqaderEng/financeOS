@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getCurrentUser } from '@/lib/auth';
-import { prisma } from '@/lib/prisma';
+import { db } from '@/lib/db';
 import { z } from 'zod';
 
 const createAccountSchema = z.object({
@@ -23,7 +23,7 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const validatedData = createAccountSchema.parse(body);
 
-    const account = await prisma.account.create({
+    const account = await db.account.create({
       data: {
         userId: user.id,
         name: validatedData.name,
@@ -61,7 +61,7 @@ export async function GET() {
       );
     }
 
-    const accounts = await prisma.account.findMany({
+    const accounts = await db.account.findMany({
       where: {
         userId: user.id,
         isActive: true,

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getCurrentUser } from '@/lib/auth';
-import { prisma } from '@/lib/prisma';
+import { db } from '@/lib/db';
 import { z } from 'zod';
 
 const createTransactionSchema = z.object({
@@ -28,14 +28,14 @@ export async function POST(req: NextRequest) {
     // Get or create default account if not provided
     let accountId = validatedData.accountId;
     if (!accountId) {
-      let defaultAccount = await prisma.account.findFirst({
+      let defaultAccount = await db.account.findFirst({
         where: { userId: user.id, isActive: true },
         orderBy: { createdAt: 'asc' },
       });
 
       // Create a default account if none exists
       if (!defaultAccount) {
-        defaultAccount = await prisma.account.create({
+        defaultAccount = await db.account.create({
           data: {
             userId: user.id,
             name: 'Primary Account',
@@ -49,7 +49,7 @@ export async function POST(req: NextRequest) {
 
     // Get or create category
     const categoryName = validatedData.category;
-    let category = await prisma.category.findFirst({
+    let category = await db.category.findFirst({
       where: {
         userId: user.id,
         name: { equals: categoryName, mode: 'insensitive' },
@@ -58,7 +58,7 @@ export async function POST(req: NextRequest) {
 
     if (!category) {
       // Create category if it doesn't exist
-      category = await prisma.category.create({
+      category = await db.category.create({
         data: {
           userId: user.id,
           name: categoryName,
@@ -68,7 +68,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Create transaction
-    const transaction = await prisma.transaction.create({
+    const transaction = await db.transaction.create({
       data: {
         userId: user.id,
         accountId: accountId,
@@ -86,14 +86,14 @@ export async function POST(req: NextRequest) {
 
     // Update account balance
     if (validatedData.type === 'income') {
-      await prisma.account.update({
+      await db.account.update({
         where: { id: accountId },
         data: {
           currentBalance: { increment: validatedData.amount },
         },
       });
     } else {
-      await prisma.account.update({
+      await db.account.update({
         where: { id: accountId },
         data: {
           currentBalance: { decrement: validatedData.amount },
@@ -138,7 +138,7 @@ export async function GET(req: NextRequest) {
       where.transactionType = type;
     }
 
-    const transactions = await prisma.transaction.findMany({
+    const transactions = await db.transaction.findMany({
       where,
       include: {
         category: true,
