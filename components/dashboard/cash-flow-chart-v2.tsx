@@ -190,35 +190,50 @@ export function CashFlowChartV2({ isLoading, isEmpty }: CashFlowChartV2Props) {
         </div>
 
         {/* Bar Chart */}
-        <div className="space-y-4">
-          {data.map((month, index) => (
-            <div key={index} className="space-y-2">
-              <div className="flex items-center justify-between text-sm">
-                <span className="font-medium text-muted-foreground">{month.month}</span>
-                <div className="flex items-center gap-4">
-                  <span className="text-green-600 dark:text-green-500 text-xs">
-                    {formatCurrency(month.income)}
-                  </span>
-                  <span className="text-red-600 dark:text-red-500 text-xs">
-                    {formatCurrency(month.expenses)}
-                  </span>
+        <div className="space-y-3">
+          {data.map((month, index) => {
+            const netAmount = month.income - month.expenses
+            const isPositive = netAmount >= 0
+
+            return (
+              <div key={index} className="space-y-1.5">
+                <div className="flex items-center justify-between text-xs">
+                  <span className="font-medium text-muted-foreground w-20">{month.month}</span>
+                  <div className="flex items-center gap-3 text-xs">
+                    <div className="flex items-center gap-1">
+                      <div className="w-2 h-2 rounded-full bg-green-500" />
+                      <span className="text-muted-foreground">{formatCurrency(month.income)}</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <div className="w-2 h-2 rounded-full bg-red-500" />
+                      <span className="text-muted-foreground">{formatCurrency(month.expenses)}</span>
+                    </div>
+                    <span className={`font-semibold ${isPositive ? 'text-green-600 dark:text-green-500' : 'text-red-600 dark:text-red-500'}`}>
+                      {isPositive ? '+' : ''}{formatCurrency(netAmount)}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="relative h-10">
+                  {/* Income bar */}
+                  <div className="absolute left-0 top-0 h-4 bg-green-500/80 hover:bg-green-500 rounded transition-all duration-300 flex items-center justify-start px-2"
+                    style={{ width: `${Math.max((month.income / maxValue) * 100, 1)}%` }}>
+                    {month.income > 0 && (
+                      <span className="text-[10px] text-white font-medium">Income</span>
+                    )}
+                  </div>
+
+                  {/* Expenses bar */}
+                  <div className="absolute left-0 bottom-0 h-4 bg-red-500/80 hover:bg-red-500 rounded transition-all duration-300 flex items-center justify-start px-2"
+                    style={{ width: `${Math.max((month.expenses / maxValue) * 100, 1)}%` }}>
+                    {month.expenses > 0 && (
+                      <span className="text-[10px] text-white font-medium">Expense</span>
+                    )}
+                  </div>
                 </div>
               </div>
-
-              <div className="relative h-8 bg-muted/20 rounded-lg overflow-hidden">
-                {/* Income bar */}
-                <div
-                  className="absolute left-0 top-0 h-full bg-gradient-to-r from-green-500 to-green-600 dark:from-green-600 dark:to-green-700 transition-all duration-500 rounded-lg"
-                  style={{ width: `${(month.income / maxValue) * 100}%` }}
-                />
-                {/* Expenses bar */}
-                <div
-                  className="absolute left-0 bottom-0 h-1/2 bg-gradient-to-r from-red-500 to-red-600 dark:from-red-600 dark:to-red-700 transition-all duration-500 rounded-lg"
-                  style={{ width: `${(month.expenses / maxValue) * 100}%` }}
-                />
-              </div>
-            </div>
-          ))}
+            )
+          })}
         </div>
 
         {/* Legend */}
