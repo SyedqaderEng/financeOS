@@ -11,5 +11,5 @@ export default async function DashboardPage() {
     redirect('/login');
   }
 
-  return <DashboardContentV2 userName={user.name} userEmail={user.email} />;
+  return <DashboardContentV2 userName={user.name || null} userEmail={user.email} />;
 }

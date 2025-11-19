@@ -62,7 +62,7 @@ export function DashboardContentV2({ userName, userEmail }: DashboardContentProp
     setRefreshKey(prev => prev + 1)
   }
 
-  const isEmpty = !loading && stats && stats.accountsCount === 0 && stats.transactionsCount === 0
+  const isEmpty: boolean = !loading && !!stats && stats.accountsCount === 0 && stats.transactionsCount === 0
 
   // Format currency
   const formatCurrency = (amount: number) => {

@@ -29,7 +29,7 @@ export async function GET() {
     })
 
     // Calculate total balance across all accounts
-    const totalBalance = accounts.reduce((sum, account) => {
+    const totalBalance = accounts.reduce((sum: number, account: any) => {
       return sum + parseFloat(account.currentBalance.toString())
     }, 0)
 

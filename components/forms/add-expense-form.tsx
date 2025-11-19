@@ -53,7 +53,7 @@ export function AddExpenseForm({ onSuccess }: AddExpenseFormProps) {
           description: formData.description,
           category: formData.category,
           type: 'expense',
-          date: new Date(formData.date),
+          date: new Date(formData.date || new Date().toISOString()),
           accountId: formData.accountId || null,
         }),
       })
