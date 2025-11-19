@@ -7,7 +7,7 @@ import bcrypt from 'bcryptjs';
 import { loginSchema } from '@/lib/validations';
 
 export const {
-  handlers: { GET, POST },
+  handlers,
   auth,
   signIn,
   signOut,
@@ -201,6 +201,9 @@ export const {
   },
   debug: process.env.NODE_ENV === 'development',
 });
+
+// Export route handlers for App Router
+export const { GET, POST } = handlers;
 
 // Helper function to get current session
 export async function getCurrentUser() {
