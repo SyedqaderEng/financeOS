@@ -200,14 +200,22 @@ export function DashboardContentV2({ userName, userEmail }: DashboardContentProp
         {/* Right Panel - Quick Actions */}
         <CollapsiblePanel side="right" defaultCollapsed={false} className="hidden lg:block">
           <div className="space-y-6">
-            <div>
-              <h3 className="text-lg font-semibold mb-4">Quick Actions</h3>
-              <div className="space-y-3">
+            {/* Quick Actions Header Card */}
+            <Card className="bg-gradient-to-br from-primary/10 via-primary/5 to-transparent border-primary/20">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center">
+                    <PlusCircle className="h-5 w-5 text-primary" />
+                  </div>
+                  Quick Actions
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-2">
                 <AddIncomeForm onSuccess={handleDataChange} />
                 <AddExpenseForm onSuccess={handleDataChange} />
                 <AddBudgetForm onSuccess={handleDataChange} />
-              </div>
-            </div>
+              </CardContent>
+            </Card>
 
             {/* Budget Progress */}
             <BudgetProgressV2 isEmpty={isEmpty} isLoading={loading} key={refreshKey} />
@@ -216,7 +224,9 @@ export function DashboardContentV2({ userName, userEmail }: DashboardContentProp
             <Card className="transition-all duration-300 hover:shadow-lg">
               <CardHeader>
                 <CardTitle className="text-base flex items-center gap-2">
-                  <PlusCircle className="h-5 w-5 text-primary" />
+                  <div className="h-6 w-6 rounded-md bg-primary/10 flex items-center justify-center">
+                    <Receipt className="h-4 w-4 text-primary" />
+                  </div>
                   Quick Links
                 </CardTitle>
               </CardHeader>

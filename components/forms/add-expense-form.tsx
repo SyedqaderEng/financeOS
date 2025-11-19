@@ -6,22 +6,26 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
-import { MinusCircle, Loader2 } from 'lucide-react'
+import { MinusCircle, Loader2, Upload, X } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 
 const EXPENSE_CATEGORIES = [
-  { value: 'housing', label: 'Housing', icon: '🏠' },
-  { value: 'food', label: 'Food & Dining', icon: '🍔' },
-  { value: 'transportation', label: 'Transportation', icon: '🚗' },
-  { value: 'utilities', label: 'Utilities', icon: '⚡' },
-  { value: 'entertainment', label: 'Entertainment', icon: '🎮' },
-  { value: 'healthcare', label: 'Healthcare', icon: '🏥' },
-  { value: 'shopping', label: 'Shopping', icon: '🛍️' },
-  { value: 'education', label: 'Education', icon: '📚' },
-  { value: 'insurance', label: 'Insurance', icon: '🛡️' },
-  { value: 'subscription', label: 'Subscriptions', icon: '📱' },
-  { value: 'other', label: 'Other', icon: '💳' },
+  { value: 'Housing', label: 'Housing', icon: '🏠' },
+  { value: 'Food & Dining', label: 'Food & Dining', icon: '🍔' },
+  { value: 'Transportation', label: 'Transportation', icon: '🚗' },
+  { value: 'Utilities', label: 'Utilities', icon: '⚡' },
+  { value: 'Entertainment', label: 'Entertainment', icon: '🎮' },
+  { value: 'Healthcare', label: 'Healthcare', icon: '🏥' },
+  { value: 'Shopping', label: 'Shopping', icon: '🛍️' },
+  { value: 'Education', label: 'Education', icon: '📚' },
+  { value: 'Insurance', label: 'Insurance', icon: '🛡️' },
+  { value: 'Subscriptions', label: 'Subscriptions', icon: '📱' },
+  { value: 'Personal Care', label: 'Personal Care', icon: '💅' },
+  { value: 'Fitness', label: 'Fitness', icon: '💪' },
+  { value: 'Travel', label: 'Travel', icon: '✈️' },
+  { value: 'Gifts', label: 'Gifts & Donations', icon: '🎁' },
+  { value: 'custom', label: '+ Add Custom Category', icon: '✨' },
 ]
 
 interface AddExpenseFormProps {
@@ -36,12 +40,44 @@ export function AddExpenseForm({ onSuccess }: AddExpenseFormProps) {
     amount: '',
     description: '',
     category: '',
+    customCategory: '',
     date: new Date().toISOString().split('T')[0],
     accountId: '',
   })
+  const [receiptFile, setReceiptFile] = useState<File | null>(null)
+  const [showCustomCategory, setShowCustomCategory] = useState(false)
+
+  const handleCategoryChange = (value: string) => {
+    if (value === 'custom') {
+      setShowCustomCategory(true)
+      setFormData({ ...formData, category: '' })
+    } else {
+      setShowCustomCategory(false)
+      setFormData({ ...formData, category: value, customCategory: '' })
+    }
+  }
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0]
+      if (file.size > 5 * 1024 * 1024) { // 5MB limit
+        toast.error('File size must be less than 5MB')
+        return
+      }
+      setReceiptFile(file)
+    }
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+
+    const categoryToUse = showCustomCategory ? formData.customCategory : formData.category
+
+    if (!formData.amount || !categoryToUse || !formData.description) {
+      toast.error('Please fill in all required fields')
+      return
+    }
+
     setLoading(true)
 
     try {
@@ -51,10 +87,11 @@ export function AddExpenseForm({ onSuccess }: AddExpenseFormProps) {
         body: JSON.stringify({
           amount: parseFloat(formData.amount),
           description: formData.description,
-          category: formData.category,
+          category: categoryToUse,
           type: 'expense',
           date: new Date(formData.date || new Date().toISOString()),
           accountId: formData.accountId || null,
+          hasReceipt: receiptFile !== null,
         }),
       })
 
@@ -64,14 +101,19 @@ export function AddExpenseForm({ onSuccess }: AddExpenseFormProps) {
       }
 
       toast.success('Expense added successfully!')
-      setOpen(false)
+
+      // Reset form
       setFormData({
         amount: '',
         description: '',
         category: '',
+        customCategory: '',
         date: new Date().toISOString().split('T')[0],
         accountId: '',
       })
+      setReceiptFile(null)
+      setShowCustomCategory(false)
+      setOpen(false)
 
       router.refresh()
       onSuccess?.()
@@ -85,7 +127,7 @@ export function AddExpenseForm({ onSuccess }: AddExpenseFormProps) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="w-full" size="sm" variant="outline">
+        <Button className="w-full transition-all duration-300 hover:scale-105" size="sm" variant="outline">
           <MinusCircle className="h-4 w-4 mr-2" />
           Add Expense
         </Button>
@@ -113,25 +155,48 @@ export function AddExpenseForm({ onSuccess }: AddExpenseFormProps) {
 
           <div className="space-y-2">
             <Label htmlFor="category">Category</Label>
-            <Select
-              value={formData.category}
-              onValueChange={(value) => setFormData({ ...formData, category: value })}
-              required
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select category" />
-              </SelectTrigger>
-              <SelectContent>
-                {EXPENSE_CATEGORIES.map((cat) => (
-                  <SelectItem key={cat.value} value={cat.value}>
-                    <span className="flex items-center gap-2">
-                      <span>{cat.icon}</span>
-                      <span>{cat.label}</span>
-                    </span>
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            {!showCustomCategory ? (
+              <Select
+                value={formData.category}
+                onValueChange={handleCategoryChange}
+                required
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select category" />
+                </SelectTrigger>
+                <SelectContent>
+                  {EXPENSE_CATEGORIES.map((cat) => (
+                    <SelectItem key={cat.value} value={cat.value}>
+                      <span className="flex items-center gap-2">
+                        <span>{cat.icon}</span>
+                        <span>{cat.label}</span>
+                      </span>
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            ) : (
+              <div className="flex gap-2">
+                <Input
+                  id="customCategory"
+                  placeholder="Enter custom category"
+                  value={formData.customCategory}
+                  onChange={(e) => setFormData({ ...formData, customCategory: e.target.value })}
+                  required
+                />
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="icon"
+                  onClick={() => {
+                    setShowCustomCategory(false)
+                    setFormData({ ...formData, customCategory: '' })
+                  }}
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
+            )}
           </div>
 
           <div className="space-y-2">
@@ -154,6 +219,43 @@ export function AddExpenseForm({ onSuccess }: AddExpenseFormProps) {
               onChange={(e) => setFormData({ ...formData, date: e.target.value })}
               required
             />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="receipt">Receipt (Optional)</Label>
+            <div className="flex items-center gap-2">
+              <Input
+                id="receipt"
+                type="file"
+                accept="image/*,.pdf"
+                onChange={handleFileChange}
+                className="hidden"
+              />
+              <Button
+                type="button"
+                variant="outline"
+                className="w-full"
+                onClick={() => document.getElementById('receipt')?.click()}
+              >
+                <Upload className="h-4 w-4 mr-2" />
+                {receiptFile ? receiptFile.name : 'Upload Receipt'}
+              </Button>
+              {receiptFile && (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setReceiptFile(null)}
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              )}
+            </div>
+            {receiptFile && (
+              <p className="text-xs text-muted-foreground">
+                {(receiptFile.size / 1024).toFixed(1)} KB
+              </p>
+            )}
           </div>
 
           <div className="flex gap-3 pt-4">
