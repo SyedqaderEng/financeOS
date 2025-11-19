@@ -7,6 +7,7 @@ import { signIn } from 'next-auth/react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { signupSchema } from '@/lib/validations';
@@ -180,13 +181,12 @@ export default function SignupPage() {
 
             <div className="space-y-2">
               <div className="flex items-start space-x-2">
-                <input
-                  type="checkbox"
+                <Checkbox
                   id="agreeToTerms"
                   checked={formData.agreeToTerms}
-                  onChange={(e) => setFormData({ ...formData, agreeToTerms: e.target.checked })}
+                  onCheckedChange={(checked) => setFormData({ ...formData, agreeToTerms: !!checked })}
                   disabled={isLoading}
-                  className="mt-1 h-4 w-4 rounded border-gray-300"
+                  className="mt-1"
                 />
                 <Label htmlFor="agreeToTerms" className="text-sm font-normal cursor-pointer">
                   I agree to the{' '}
@@ -205,13 +205,12 @@ export default function SignupPage() {
             </div>
 
             <div className="flex items-start space-x-2">
-              <input
-                type="checkbox"
+              <Checkbox
                 id="subscribeToNewsletter"
                 checked={formData.subscribeToNewsletter}
-                onChange={(e) => setFormData({ ...formData, subscribeToNewsletter: e.target.checked })}
+                onCheckedChange={(checked) => setFormData({ ...formData, subscribeToNewsletter: !!checked })}
                 disabled={isLoading}
-                className="mt-1 h-4 w-4 rounded border-gray-300"
+                className="mt-1"
               />
               <Label htmlFor="subscribeToNewsletter" className="text-sm font-normal cursor-pointer">
                 Send me tips and product updates

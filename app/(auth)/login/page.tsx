@@ -7,6 +7,7 @@ import { signIn } from 'next-auth/react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 
@@ -121,13 +122,11 @@ export default function LoginPage() {
               />
             </div>
             <div className="flex items-center space-x-2">
-              <input
-                type="checkbox"
+              <Checkbox
                 id="rememberMe"
                 checked={formData.rememberMe}
-                onChange={(e) => setFormData({ ...formData, rememberMe: e.target.checked })}
+                onCheckedChange={(checked) => setFormData({ ...formData, rememberMe: !!checked })}
                 disabled={isLoading}
-                className="h-4 w-4 rounded border-gray-300"
               />
               <Label htmlFor="rememberMe" className="text-sm font-normal cursor-pointer">
                 Remember me for 30 days
