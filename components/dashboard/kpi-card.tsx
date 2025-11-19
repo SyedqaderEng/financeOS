@@ -45,16 +45,18 @@ export function KPICard({
 
   if (isEmpty) {
     return (
-      <Card className="border-dashed">
+      <Card className="border-dashed transition-all duration-300 hover:scale-105 hover:shadow-lg hover:border-primary/50 cursor-pointer group">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium text-muted-foreground">
+          <CardTitle className="text-sm font-medium text-muted-foreground group-hover:text-primary transition-colors">
             {title}
           </CardTitle>
-          <Icon className="h-4 w-4 text-muted-foreground" />
+          <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-all">
+            <Icon className="h-5 w-5 text-primary group-hover:scale-110 transition-transform" />
+          </div>
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold text-muted-foreground">$0.00</div>
-          <p className="text-xs text-muted-foreground mt-2">
+          <div className="text-3xl font-bold text-muted-foreground group-hover:text-foreground transition-colors">$0.00</div>
+          <p className="text-xs text-muted-foreground mt-2 group-hover:text-primary/70 transition-colors">
             {emptyMessage || 'No data yet'}
           </p>
         </CardContent>
@@ -63,13 +65,15 @@ export function KPICard({
   }
 
   return (
-    <Card>
+    <Card className="transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-primary/20 hover:border-primary/50 cursor-pointer group">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-sm font-medium">{title}</CardTitle>
-        <Icon className="h-4 w-4 text-muted-foreground" />
+        <CardTitle className="text-sm font-medium group-hover:text-primary transition-colors">{title}</CardTitle>
+        <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-all">
+          <Icon className="h-5 w-5 text-primary group-hover:scale-110 transition-transform" />
+        </div>
       </CardHeader>
       <CardContent>
-        <div className="text-2xl font-bold">{value}</div>
+        <div className="text-3xl font-bold">{value}</div>
         {trend && (
           <p className="text-xs text-muted-foreground mt-1">
             <span

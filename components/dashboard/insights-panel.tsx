@@ -92,9 +92,14 @@ export function InsightsPanel({ insights = defaultInsights }: InsightsPanelProps
   }
 
   return (
-    <Card>
+    <Card className="transition-all duration-300 hover:shadow-lg">
       <CardHeader>
-        <CardTitle>Insights & Tips</CardTitle>
+        <CardTitle className="flex items-center gap-2">
+          <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center">
+            <Lightbulb className="h-5 w-5 text-primary" />
+          </div>
+          Insights & Tips
+        </CardTitle>
         <CardDescription>
           Personalized recommendations for your finances
         </CardDescription>
@@ -108,21 +113,21 @@ export function InsightsPanel({ insights = defaultInsights }: InsightsPanelProps
           return (
             <div
               key={insight.id}
-              className="flex gap-3 p-3 rounded-lg border bg-card hover:bg-accent/50 transition-colors"
+              className="flex gap-3 p-3 rounded-lg border bg-card transition-all duration-300 hover:scale-[1.02] hover:shadow-md hover:border-primary/50 cursor-pointer group"
             >
-              <div className={`h-8 w-8 rounded-lg ${bgColor} flex items-center justify-center flex-shrink-0`}>
-                <Icon className={`h-4 w-4 ${color}`} />
+              <div className={`h-10 w-10 rounded-lg ${bgColor} flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform`}>
+                <Icon className={`h-5 w-5 ${color} group-hover:scale-110 transition-transform`} />
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-1">
-                  <h4 className="text-sm font-medium">{insight.title}</h4>
+                  <h4 className="text-sm font-medium group-hover:text-primary transition-colors">{insight.title}</h4>
                   {insight.priority === 'high' && (
-                    <Badge variant="destructive" className="text-[10px] h-4 px-1">
+                    <Badge variant="destructive" className="text-[10px] h-4 px-1 animate-pulse">
                       New
                     </Badge>
                   )}
                 </div>
-                <p className="text-xs text-muted-foreground">
+                <p className="text-xs text-muted-foreground group-hover:text-primary/70 transition-colors">
                   {insight.description}
                 </p>
               </div>

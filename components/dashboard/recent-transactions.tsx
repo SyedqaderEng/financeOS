@@ -41,25 +41,25 @@ export function RecentTransactions({ isLoading, isEmpty }: RecentTransactionsPro
 
   if (isEmpty) {
     return (
-      <Card className="border-dashed">
+      <Card className="border-dashed transition-all duration-300 hover:scale-[1.01] hover:shadow-lg hover:border-primary/50 group">
         <CardHeader>
-          <CardTitle className="text-muted-foreground">Recent Transactions</CardTitle>
-          <CardDescription className="text-muted-foreground">
+          <CardTitle className="text-muted-foreground group-hover:text-primary transition-colors">Recent Transactions</CardTitle>
+          <CardDescription className="text-muted-foreground group-hover:text-primary/70 transition-colors">
             Your latest 5 transactions will appear here
           </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="py-12 flex flex-col items-center justify-center text-center">
-            <div className="h-12 w-12 rounded-full bg-muted flex items-center justify-center mb-4">
-              <Receipt className="h-6 w-6 text-muted-foreground" />
+            <div className="h-16 w-16 rounded-full bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform group-hover:shadow-lg group-hover:shadow-primary/30">
+              <Receipt className="h-8 w-8 text-primary group-hover:scale-110 transition-transform" />
             </div>
-            <h3 className="text-lg font-semibold text-muted-foreground mb-2">
+            <h3 className="text-lg font-semibold text-muted-foreground mb-2 group-hover:text-foreground transition-colors">
               No transactions yet
             </h3>
-            <p className="text-sm text-muted-foreground max-w-sm mb-4">
+            <p className="text-sm text-muted-foreground max-w-sm mb-4 group-hover:text-primary/70 transition-colors">
               Start tracking your finances by adding your first transaction.
             </p>
-            <Button asChild variant="outline">
+            <Button asChild variant="outline" className="transition-all duration-300 hover:scale-105 hover:shadow-lg hover:border-primary">
               <Link href="/app/transactions">
                 Add Transaction
                 <ArrowRight className="ml-2 h-4 w-4" />
