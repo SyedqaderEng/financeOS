@@ -193,25 +193,25 @@ export default function LandingPage() {
             </div>
           </Link>
           <nav className="hidden items-center gap-6 md:flex">
-            <Link href="#features" className="text-sm font-medium hover:text-primary transition-colors">
+            <Link href="#features" className="text-sm font-medium hover:text-primary transition-all duration-300 hover:scale-110 hover:drop-shadow-[0_0_8px_rgba(var(--primary),0.5)]">
               Features
             </Link>
-            <Link href="#pricing" className="text-sm font-medium hover:text-primary transition-colors">
+            <Link href="#pricing" className="text-sm font-medium hover:text-primary transition-all duration-300 hover:scale-110 hover:drop-shadow-[0_0_8px_rgba(var(--primary),0.5)]">
               Pricing
             </Link>
-            <Link href="#testimonials" className="text-sm font-medium hover:text-primary transition-colors">
+            <Link href="#testimonials" className="text-sm font-medium hover:text-primary transition-all duration-300 hover:scale-110 hover:drop-shadow-[0_0_8px_rgba(var(--primary),0.5)]">
               Testimonials
             </Link>
-            <Link href="#faq" className="text-sm font-medium hover:text-primary transition-colors">
+            <Link href="#faq" className="text-sm font-medium hover:text-primary transition-all duration-300 hover:scale-110 hover:drop-shadow-[0_0_8px_rgba(var(--primary),0.5)]">
               FAQ
             </Link>
           </nav>
           <div className="flex items-center gap-4">
             <Link href="/login">
-              <Button variant="ghost">Login</Button>
+              <Button variant="ghost" className="transition-all duration-300 hover:scale-105 hover:shadow-lg">Login</Button>
             </Link>
             <Link href="/signup">
-              <Button>Start Free Trial</Button>
+              <Button className="transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-primary/50">Start Free Trial</Button>
             </Link>
           </div>
         </div>
@@ -219,7 +219,7 @@ export default function LandingPage() {
 
       {/* Hero Section */}
       <main className="flex-1">
-        <section className="container flex flex-col items-center gap-6 pb-8 pt-6 md:py-12 lg:py-24">
+        <section className="container flex flex-col items-center gap-6 py-12 md:py-16 lg:py-20">
           <div className="flex max-w-[980px] flex-col items-center gap-4 text-center">
             <h1 className="text-4xl font-bold leading-tight tracking-tighter md:text-6xl lg:text-7xl lg:leading-[1.1]">
               Take Control of Your Money with Smart Finance Tracking
@@ -229,13 +229,13 @@ export default function LandingPage() {
             </p>
             <div className="flex flex-col gap-4 min-[400px]:flex-row">
               <Link href="/signup">
-                <Button size="lg" className="gap-2">
+                <Button size="lg" className="gap-2 transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-primary/50">
                   Start Your Free 30-Day Trial
                   <span className="text-xs">→</span>
                 </Button>
               </Link>
               <Link href="#features">
-                <Button size="lg" variant="outline">
+                <Button size="lg" variant="outline" className="transition-all duration-300 hover:scale-105 hover:shadow-lg hover:border-primary">
                   Learn More
                 </Button>
               </Link>
@@ -247,7 +247,7 @@ export default function LandingPage() {
         </section>
 
         {/* Features Section */}
-        <section id="features" className="container space-y-6 bg-secondary/30 py-8 md:py-12 lg:py-24">
+        <section id="features" className="container space-y-6 bg-secondary/30 py-12 md:py-16 lg:py-20">
           <div className="mx-auto flex max-w-[58rem] flex-col items-center space-y-4 text-center">
             <h2 className="text-3xl font-bold leading-[1.1] sm:text-3xl md:text-5xl">
               Why FinanceOS is the Smart Choice for Your Wallet
@@ -303,7 +303,7 @@ export default function LandingPage() {
         </section>
 
         {/* Testimonials Section */}
-        <section id="testimonials" className="container py-8 md:py-12 lg:py-24">
+        <section id="testimonials" className="container py-12 md:py-16 lg:py-20">
           <div className="mx-auto flex max-w-[58rem] flex-col items-center space-y-4 text-center mb-12">
             <h2 className="text-3xl font-bold leading-[1.1] sm:text-3xl md:text-5xl">
               Trusted by 10,000+ Users Worldwide
@@ -314,7 +314,7 @@ export default function LandingPage() {
           </div>
           <div className="mx-auto grid gap-6 md:max-w-[64rem] md:grid-cols-3">
             {TESTIMONIALS.map((testimonial, index) => (
-              <div key={index} className="rounded-lg border bg-card p-6 space-y-4">
+              <div key={index} className="rounded-lg border bg-card p-6 space-y-4 transition-all duration-300 hover:scale-105 hover:shadow-lg hover:border-primary cursor-pointer">
                 <div className="flex gap-1">
                   {[...Array(testimonial.rating)].map((_, i) => (
                     <span key={i} className="text-yellow-400">★</span>
@@ -331,7 +331,7 @@ export default function LandingPage() {
         </section>
 
         {/* Pricing Section */}
-        <section id="pricing" className="container py-8 md:py-12 lg:py-24">
+        <section id="pricing" className="container py-12 md:py-16 lg:py-20">
           <div className="mx-auto flex max-w-[58rem] flex-col items-center space-y-4 text-center">
             <h2 className="text-3xl font-bold leading-[1.1] sm:text-3xl md:text-5xl">
               Simple, Transparent Pricing
@@ -385,8 +385,8 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* CTA Section - No gap with pricing */}
-        <section className="container py-8 md:py-12 lg:py-24">
+        {/* CTA Section */}
+        <section className="container py-12 md:py-16 lg:py-20">
           <div className="mx-auto flex max-w-[58rem] flex-col items-center space-y-4 text-center">
             <h2 className="text-3xl font-bold leading-[1.1] sm:text-3xl md:text-5xl">
               Ready to Take Control of Your Finances?
@@ -395,7 +395,7 @@ export default function LandingPage() {
               Join thousands of users who have transformed their financial lives with FinanceOS. Save money, reduce stress, and achieve your goals.
             </p>
             <Link href="/signup">
-              <Button size="lg" className="mt-4">
+              <Button size="lg" className="mt-4 transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-primary/50">
                 Start Your Free 30-Day Trial
               </Button>
             </Link>
@@ -403,7 +403,7 @@ export default function LandingPage() {
         </section>
 
         {/* FAQ Section */}
-        <section id="faq" className="container py-8 md:py-12 lg:py-24">
+        <section id="faq" className="container py-12 md:py-16 lg:py-20">
           <div className="mx-auto flex max-w-[58rem] flex-col items-center space-y-8">
             <div className="text-center space-y-4 w-full">
               <h2 className="text-3xl font-bold leading-[1.1] sm:text-3xl md:text-5xl">
@@ -452,28 +452,28 @@ export default function LandingPage() {
               <div className="flex gap-3 pt-2">
                 <a
                   href="https://twitter.com"
-                  className="text-muted-foreground hover:text-primary transition-colors"
+                  className="text-muted-foreground hover:text-primary transition-all duration-300 hover:scale-110 hover:drop-shadow-[0_0_8px_rgba(var(--primary),0.5)]"
                   aria-label="Twitter"
                 >
                   <Twitter className="h-5 w-5" />
                 </a>
                 <a
                   href="https://facebook.com"
-                  className="text-muted-foreground hover:text-primary transition-colors"
+                  className="text-muted-foreground hover:text-primary transition-all duration-300 hover:scale-110 hover:drop-shadow-[0_0_8px_rgba(var(--primary),0.5)]"
                   aria-label="Facebook"
                 >
                   <Facebook className="h-5 w-5" />
                 </a>
                 <a
                   href="https://linkedin.com"
-                  className="text-muted-foreground hover:text-primary transition-colors"
+                  className="text-muted-foreground hover:text-primary transition-all duration-300 hover:scale-110 hover:drop-shadow-[0_0_8px_rgba(var(--primary),0.5)]"
                   aria-label="LinkedIn"
                 >
                   <Linkedin className="h-5 w-5" />
                 </a>
                 <a
                   href="https://instagram.com"
-                  className="text-muted-foreground hover:text-primary transition-colors"
+                  className="text-muted-foreground hover:text-primary transition-all duration-300 hover:scale-110 hover:drop-shadow-[0_0_8px_rgba(var(--primary),0.5)]"
                   aria-label="Instagram"
                 >
                   <Instagram className="h-5 w-5" />
@@ -486,22 +486,22 @@ export default function LandingPage() {
               <h4 className="font-semibold">Product</h4>
               <ul className="space-y-2 text-sm">
                 <li>
-                  <Link href="#features" className="text-muted-foreground hover:text-primary transition-colors">
+                  <Link href="#features" className="text-muted-foreground hover:text-primary transition-all duration-300 hover:scale-105 hover:drop-shadow-[0_0_8px_rgba(var(--primary),0.5)] inline-block">
                     Features
                   </Link>
                 </li>
                 <li>
-                  <Link href="#pricing" className="text-muted-foreground hover:text-primary transition-colors">
+                  <Link href="#pricing" className="text-muted-foreground hover:text-primary transition-all duration-300 hover:scale-105 hover:drop-shadow-[0_0_8px_rgba(var(--primary),0.5)] inline-block">
                     Pricing
                   </Link>
                 </li>
                 <li>
-                  <Link href="/security" className="text-muted-foreground hover:text-primary transition-colors">
+                  <Link href="/security" className="text-muted-foreground hover:text-primary transition-all duration-300 hover:scale-105 hover:drop-shadow-[0_0_8px_rgba(var(--primary),0.5)] inline-block">
                     Security
                   </Link>
                 </li>
                 <li>
-                  <Link href="/blog" className="text-muted-foreground hover:text-primary transition-colors">
+                  <Link href="/blog" className="text-muted-foreground hover:text-primary transition-all duration-300 hover:scale-105 hover:drop-shadow-[0_0_8px_rgba(var(--primary),0.5)] inline-block">
                     Blog
                   </Link>
                 </li>
@@ -513,17 +513,17 @@ export default function LandingPage() {
               <h4 className="font-semibold">Company</h4>
               <ul className="space-y-2 text-sm">
                 <li>
-                  <Link href="/about" className="text-muted-foreground hover:text-primary transition-colors">
+                  <Link href="/about" className="text-muted-foreground hover:text-primary transition-all duration-300 hover:scale-105 hover:drop-shadow-[0_0_8px_rgba(var(--primary),0.5)] inline-block">
                     About
                   </Link>
                 </li>
                 <li>
-                  <Link href="/careers" className="text-muted-foreground hover:text-primary transition-colors">
+                  <Link href="/careers" className="text-muted-foreground hover:text-primary transition-all duration-300 hover:scale-105 hover:drop-shadow-[0_0_8px_rgba(var(--primary),0.5)] inline-block">
                     Careers
                   </Link>
                 </li>
                 <li>
-                  <Link href="/contact" className="text-muted-foreground hover:text-primary transition-colors">
+                  <Link href="/contact" className="text-muted-foreground hover:text-primary transition-all duration-300 hover:scale-105 hover:drop-shadow-[0_0_8px_rgba(var(--primary),0.5)] inline-block">
                     Contact
                   </Link>
                 </li>
@@ -535,17 +535,17 @@ export default function LandingPage() {
               <h4 className="font-semibold">Legal</h4>
               <ul className="space-y-2 text-sm">
                 <li>
-                  <Link href="/privacy" className="text-muted-foreground hover:text-primary transition-colors">
+                  <Link href="/privacy" className="text-muted-foreground hover:text-primary transition-all duration-300 hover:scale-105 hover:drop-shadow-[0_0_8px_rgba(var(--primary),0.5)] inline-block">
                     Privacy Policy
                   </Link>
                 </li>
                 <li>
-                  <Link href="/terms" className="text-muted-foreground hover:text-primary transition-colors">
+                  <Link href="/terms" className="text-muted-foreground hover:text-primary transition-all duration-300 hover:scale-105 hover:drop-shadow-[0_0_8px_rgba(var(--primary),0.5)] inline-block">
                     Terms of Service
                   </Link>
                 </li>
                 <li>
-                  <Link href="/cookies" className="text-muted-foreground hover:text-primary transition-colors">
+                  <Link href="/cookies" className="text-muted-foreground hover:text-primary transition-all duration-300 hover:scale-105 hover:drop-shadow-[0_0_8px_rgba(var(--primary),0.5)] inline-block">
                     Cookie Policy
                   </Link>
                 </li>
@@ -627,10 +627,10 @@ function PricingCard({
 }) {
   return (
     <div
-      className={`relative overflow-hidden rounded-lg border p-8 transition-all duration-300 ${
+      className={`relative overflow-hidden rounded-lg border p-8 transition-all duration-300 cursor-pointer ${
         featured
-          ? 'border-primary shadow-lg bg-background scale-105 md:scale-100'
-          : 'bg-background hover:shadow-md'
+          ? 'border-primary shadow-lg bg-background scale-105 md:scale-100 hover:scale-110 hover:shadow-2xl hover:shadow-primary/30'
+          : 'bg-background hover:shadow-lg hover:scale-105 hover:border-primary'
       }`}
     >
       {featured && (
