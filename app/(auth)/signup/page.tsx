@@ -217,9 +217,16 @@ export default function SignupPage() {
               </Label>
             </div>
 
-            <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? 'Creating account...' : 'Create account'}
-            </Button>
+            <div className="flex gap-3">
+              <Link href="/" className="flex-1">
+                <Button type="button" variant="outline" className="w-full" disabled={isLoading}>
+                  Cancel
+                </Button>
+              </Link>
+              <Button type="submit" className="flex-1" disabled={isLoading}>
+                {isLoading ? 'Creating account...' : 'Create account'}
+              </Button>
+            </div>
           </form>
 
           <div className="relative">
