@@ -22,19 +22,22 @@ export default async function DashboardPage() {
   const isLoading = false;
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">
-          Welcome back, {user.name?.split(' ')[0] || user.email}!
-        </h1>
-        <p className="text-muted-foreground mt-1">
-          Here's an overview of your financial health
-        </p>
+    <div className="space-y-8">
+      {/* Header with gradient background */}
+      <div className="relative">
+        <div className="absolute inset-0 bg-gradient-to-r from-primary/10 via-primary/5 to-transparent rounded-lg -z-10" />
+        <div className="p-6 rounded-lg">
+          <h1 className="text-4xl font-bold tracking-tight bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text">
+            Welcome back, {user.name?.split(' ')[0] || user.email}!
+          </h1>
+          <p className="text-muted-foreground mt-2 text-lg">
+            Here's an overview of your financial health
+          </p>
+        </div>
       </div>
 
       {/* KPI Cards */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
         <KPICard
           title="Total Balance"
           value="$0.00"

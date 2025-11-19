@@ -40,10 +40,12 @@ const quickActions = [
 
 export function QuickActions() {
   return (
-    <Card>
+    <Card className="transition-all duration-300 hover:shadow-lg">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <Plus className="h-5 w-5" />
+          <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center">
+            <Plus className="h-5 w-5 text-primary" />
+          </div>
           Quick Actions
         </CardTitle>
         <CardDescription>
@@ -59,16 +61,16 @@ export function QuickActions() {
               key={action.name}
               asChild
               variant="outline"
-              className="h-auto p-4 justify-start hover:bg-accent"
+              className="h-auto p-4 justify-start transition-all duration-300 hover:scale-105 hover:shadow-lg hover:border-primary/50 group"
             >
               <Link href={action.href}>
                 <div className="flex items-start gap-3 w-full">
-                  <div className={`h-10 w-10 rounded-lg ${action.bgColor} flex items-center justify-center flex-shrink-0`}>
-                    <Icon className={`h-5 w-5 ${action.color}`} />
+                  <div className={`h-12 w-12 rounded-lg ${action.bgColor} flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform`}>
+                    <Icon className={`h-6 w-6 ${action.color} group-hover:scale-110 transition-transform`} />
                   </div>
                   <div className="flex-1 text-left">
-                    <div className="font-medium">{action.name}</div>
-                    <div className="text-xs text-muted-foreground mt-0.5">
+                    <div className="font-medium group-hover:text-primary transition-colors">{action.name}</div>
+                    <div className="text-xs text-muted-foreground mt-0.5 group-hover:text-primary/70 transition-colors">
                       {action.description}
                     </div>
                   </div>
