@@ -3,6 +3,7 @@ import { IBM_Plex_Sans } from 'next/font/google';
 import './globals.css';
 import { ThemeProvider } from '@/components/providers/theme-provider';
 import { Toaster } from '@/components/ui/toaster';
+import { Toaster as Sonner } from 'sonner';
 
 const ibmPlexSans = IBM_Plex_Sans({
   weight: ['300', '400', '500', '600', '700'],
@@ -81,6 +82,7 @@ export default function RootLayout({
         >
           {children}
           <Toaster />
+          <Sonner />
         </ThemeProvider>
       </body>
     </html>

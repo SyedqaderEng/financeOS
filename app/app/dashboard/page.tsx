@@ -1,6 +1,6 @@
 import { requireAuth } from '@/lib/auth';
 import { redirect } from 'next/navigation';
-import { DashboardContent } from '@/components/dashboard/dashboard-content';
+import { DashboardContentV2 } from '@/components/dashboard/dashboard-content-v2';
 
 export default async function DashboardPage() {
   let user;
@@ -11,5 +11,5 @@ export default async function DashboardPage() {
     redirect('/login');
   }
 
-  return <DashboardContent userName={user.name} userEmail={user.email} />;
+  return <DashboardContentV2 userName={user.name} userEmail={user.email} />;
 }
