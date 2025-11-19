@@ -70,12 +70,13 @@ export function Sidebar() {
         <div className="flex flex-col h-full">
           {/* Header */}
           <div className="flex items-center justify-between p-4 border-b">
-            {!isCollapsed && (
-              <Link href="/app/dashboard" className="flex items-center space-x-2">
-                <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center">
-                  <TrendingUp className="h-5 w-5 text-primary-foreground" />
-                </div>
-                <span className="font-bold text-lg">FinanceOS</span>
+            {!isCollapsed ? (
+              <Link href="/app/dashboard" className="flex items-center gap-2 cursor-pointer transition-all duration-300 hover:brightness-110 hover:scale-105">
+                <span className="text-2xl font-bold">💰 FinanceOS</span>
+              </Link>
+            ) : (
+              <Link href="/app/dashboard" className="flex items-center justify-center cursor-pointer transition-all duration-300 hover:brightness-110 hover:scale-110">
+                <span className="text-2xl">💰</span>
               </Link>
             )}
             <Button
