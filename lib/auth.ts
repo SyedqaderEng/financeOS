@@ -57,9 +57,10 @@ export const {
           }
 
           // Check if email is verified
-          if (!user.emailVerified) {
-            throw new Error('Please verify your email before logging in');
-          }
+          // TODO: Re-enable after implementing email service in Phase 9
+          // if (!user.emailVerified) {
+          //   throw new Error('Please verify your email before logging in');
+          // }
 
           // Verify password
           const passwordMatch = await bcrypt.compare(password, user.passwordHash);
