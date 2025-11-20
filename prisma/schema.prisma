@@ -43,21 +43,24 @@ model User {
   deletedAt                DateTime? @map("deleted_at")
 
   // Relations
-  oauthAccounts      OAuthAccount[]
-  sessions           Session[]
-  accounts           Account[]
-  categories         Category[]
-  transactions       Transaction[]
-  budgets            Budget[]
-  goals              Goal[]
-  incomeSources      IncomeSource[]
-  bills              Bill[]
-  subscriptions      Subscription[]
-  investments        Investment[]
-  reports            Report[]
-  notifications      Notification[]
-  userPreferences    UserPreferences?
-  auditLogs          AuditLog[]
+  oauthAccounts          OAuthAccount[]
+  sessions               Session[]
+  accounts               Account[]
+  categories             Category[]
+  transactions           Transaction[]
+  budgets                Budget[]
+  goals                  Goal[]
+  incomeSources          IncomeSource[]
+  bills                  Bill[]
+  subscriptions          Subscription[]
+  investments            Investment[]
+  investmentTransactions InvestmentTransaction[]
+  watchlist              Watchlist[]
+  aiInsights             AIInsight[]
+  reports                Report[]
+  notifications          Notification[]
+  userPreferences        UserPreferences?
+  auditLogs              AuditLog[]
 
   @@index([email])
   @@index([subscriptionPlan, subscriptionStatus])
@@ -418,27 +421,111 @@ model Subscription {
 // ============================================
 
 model Investment {
-  id            String    @id @default(uuid())
-  userId        String    @map("user_id")
-  accountId     String    @map("account_id")
-  symbol        String
-  name          String?
-  assetType     String?   @map("asset_type") // stock, bond, etf, mutual_fund, crypto, other
-  shares        Decimal?  @db.Decimal(15, 6)
-  costBasis     Decimal?  @map("cost_basis") @db.Decimal(15, 2)
-  currentPrice  Decimal?  @map("current_price") @db.Decimal(15, 2)
-  currentValue  Decimal?  @map("current_value") @db.Decimal(15, 2)
-  lastUpdatedAt DateTime? @map("last_updated_at")
-  notes         String?
-  createdAt     DateTime  @default(now()) @map("created_at")
-  updatedAt     DateTime  @updatedAt @map("updated_at")
+  id             String    @id @default(uuid())
+  userId         String    @map("user_id")
+  accountId      String    @map("account_id")
+  symbol         String
+  name           String?
+  assetType      String?   @map("asset_type") // stock, bond, etf, mutual_fund, crypto, other
+  shares         Decimal   @default(0) @db.Decimal(15, 6)
+  avgCostBasis   Decimal   @default(0) @map("avg_cost_basis") @db.Decimal(15, 2)
+  currentPrice   Decimal?  @map("current_price") @db.Decimal(15, 2)
+  currentValue   Decimal?  @map("current_value") @db.Decimal(15, 2)
+  totalGainLoss  Decimal?  @map("total_gain_loss") @db.Decimal(15, 2)
+  percentReturn  Decimal?  @map("percent_return") @db.Decimal(10, 4)
+  lastUpdatedAt  DateTime? @map("last_updated_at")
+  notes          String?
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @updatedAt @map("updated_at")
 
-  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  account Account @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  user                User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  account             Account               @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  investmentTransactions InvestmentTransaction[]
 
+  @@unique([userId, symbol, accountId])
   @@index([userId])
   @@index([accountId])
+  @@index([symbol])
   @@map("investments")
+}
+
+model InvestmentTransaction {
+  id              String    @id @default(uuid())
+  investmentId    String    @map("investment_id")
+  userId          String    @map("user_id")
+  transactionType String    @map("transaction_type") // buy, sell, dividend, split, fee
+  shares          Decimal   @db.Decimal(15, 6)
+  pricePerShare   Decimal   @map("price_per_share") @db.Decimal(15, 2)
+  totalAmount     Decimal   @map("total_amount") @db.Decimal(15, 2)
+  fees            Decimal   @default(0) @db.Decimal(10, 2)
+  date            DateTime  @db.Date
+  notes           String?
+  createdAt       DateTime  @default(now()) @map("created_at")
+
+  investment Investment @relation(fields: [investmentId], references: [id], onDelete: Cascade)
+  user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([investmentId])
+  @@index([userId])
+  @@index([date(sort: Desc)])
+  @@map("investment_transactions")
+}
+
+model Watchlist {
+  id          String    @id @default(uuid())
+  userId      String    @map("user_id")
+  symbol      String
+  name        String?
+  alertPrice  Decimal?  @map("alert_price") @db.Decimal(15, 2)
+  alertType   String?   @map("alert_type") // above, below
+  notes       String?
+  createdAt   DateTime  @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, symbol])
+  @@index([userId])
+  @@map("watchlist")
+}
+
+model AIInsight {
+  id          String   @id @default(uuid())
+  userId      String   @map("user_id")
+  insightType String   @map("insight_type") // spending_anomaly, subscription_waste, budget_alert, savings_opportunity, portfolio_tip
+  priority    String   // low, medium, high
+  title       String
+  message     String
+  actionLabel String?  @map("action_label")
+  actionUrl   String?  @map("action_url")
+  metadata    Json?    // additional data
+  isDismissed Boolean  @default(false) @map("is_dismissed")
+  createdAt   DateTime @default(now()) @map("created_at")
+  expiresAt   DateTime? @map("expires_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt(sort: Desc)])
+  @@index([userId, isDismissed])
+  @@map("ai_insights")
+}
+
+model NewsItem {
+  id           String   @id @default(uuid())
+  source       String
+  sourceUrl    String   @map("source_url")
+  title        String
+  summary      String?
+  content      String?
+  imageUrl     String?  @map("image_url")
+  publishedAt  DateTime @map("published_at")
+  category     String   // market, personal_finance, crypto, stocks
+  symbols      String[] // related stock symbols
+  sentiment    String?  // positive, negative, neutral
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  @@index([category, publishedAt(sort: Desc)])
+  @@index([symbols])
+  @@map("news_items")
 }
 
 // ============================================
