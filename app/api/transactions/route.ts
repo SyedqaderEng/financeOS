@@ -141,8 +141,19 @@ export async function GET(req: NextRequest) {
     const transactions = await db.transaction.findMany({
       where,
       include: {
-        category: true,
-        account: true,
+        category: {
+          select: {
+            id: true,
+            name: true,
+            icon: true,
+          },
+        },
+        account: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
       },
       orderBy: { date: 'desc' },
       take: limit,
