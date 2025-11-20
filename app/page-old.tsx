@@ -5,8 +5,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { FeatureModal } from '@/components/feature-modal';
-import { DashboardPreview } from '@/components/landing/dashboard-preview';
-import { ChevronDown, Mail, Twitter, Facebook, Linkedin, Instagram, Check, Sparkles } from 'lucide-react';
+import { ChevronDown, Mail, Twitter, Facebook, Linkedin, Instagram } from 'lucide-react';
 
 // Feature details for modals
 const FEATURES = {
@@ -240,17 +239,13 @@ export default function LandingPage() {
 
       {/* Hero Section */}
       <main className="flex-1">
-        <section className="container flex flex-col items-center gap-12 py-12 md:py-16 lg:py-20">
+        <section className="container flex flex-col items-center gap-6 py-12 md:py-16 lg:py-20">
           <div className="flex max-w-[980px] flex-col items-center gap-4 text-center">
-            <div className="inline-flex items-center gap-2 rounded-full border bg-secondary/50 px-4 py-1.5 text-sm backdrop-blur">
-              <Sparkles className="h-4 w-4 text-primary" />
-              <span>Join 10,000+ users transforming their finances</span>
-            </div>
-            <h1 className="text-4xl font-bold leading-tight tracking-tighter md:text-6xl lg:text-7xl lg:leading-[1.1] bg-gradient-to-r from-foreground via-foreground to-foreground/70 bg-clip-text">
-              Take Control of Your Money with <span className="text-primary">Smart Finance Tracking</span>
+            <h1 className="text-4xl font-bold leading-tight tracking-tighter md:text-6xl lg:text-7xl lg:leading-[1.1]">
+              Take Control of Your Money with Smart Finance Tracking
             </h1>
             <p className="max-w-[750px] text-lg text-muted-foreground sm:text-xl">
-              Like Monarch Money, but better. Track every dollar, crush your goals, and build the financial future you deserve.
+              Join 10,000+ users who save an average of $6,000 per year with FinanceOS. Track every dollar, crush your goals, and build the financial future you deserve.
             </p>
             <div className="flex flex-col gap-4 min-[400px]:flex-row">
               <Link href="/signup">
@@ -259,47 +254,23 @@ export default function LandingPage() {
                   <span className="text-xs">→</span>
                 </Button>
               </Link>
-              <Link href="#dashboard-preview">
+              <Link href="#features">
                 <Button size="lg" variant="outline" className="transition-all duration-300 hover:scale-105 hover:shadow-lg hover:border-primary">
-                  See It In Action
+                  Learn More
                 </Button>
               </Link>
             </div>
-            <div className="flex flex-wrap items-center justify-center gap-6 text-sm text-muted-foreground mt-4">
-              <div className="flex items-center gap-2">
-                <Check className="h-4 w-4 text-green-600" />
-                <span>No credit card required</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Check className="h-4 w-4 text-green-600" />
-                <span>Cancel anytime</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Check className="h-4 w-4 text-green-600" />
-                <span>Secure & encrypted</span>
-              </div>
+            <div className="flex flex-col items-center gap-2 text-sm text-muted-foreground">
+              <p>✓ No credit card required • ✓ Cancel anytime • ✓ Secure & encrypted • ✓ 4.8★ rated</p>
             </div>
           </div>
         </section>
 
-        {/* Dashboard Preview Section - Like Monarch */}
-        <section id="dashboard-preview" className="container py-12 md:py-16 lg:py-24 bg-gradient-to-b from-background to-secondary/30">
-          <div className="mx-auto flex max-w-[58rem] flex-col items-center space-y-4 text-center mb-12">
-            <h2 className="text-3xl font-bold leading-[1.1] sm:text-3xl md:text-5xl">
-              Beautiful Dashboard, Powerful Insights
-            </h2>
-            <p className="max-w-[85%] text-muted-foreground sm:text-lg">
-              See your entire financial picture at a glance. No more spreadsheets, no more guesswork.
-            </p>
-          </div>
-          <DashboardPreview />
-        </section>
-
         {/* Features Section */}
-        <section id="features" className="container space-y-6 py-12 md:py-16 lg:py-20">
+        <section id="features" className="container space-y-6 bg-secondary/30 py-12 md:py-16 lg:py-20">
           <div className="mx-auto flex max-w-[58rem] flex-col items-center space-y-4 text-center">
             <h2 className="text-3xl font-bold leading-[1.1] sm:text-3xl md:text-5xl">
-              Why FinanceOS is the Smart Choice
+              Why FinanceOS is the Smart Choice for Your Wallet
             </h2>
             <p className="max-w-[85%] text-muted-foreground sm:text-lg">
               Powerful features designed for comprehensive financial management
