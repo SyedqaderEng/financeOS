@@ -6,18 +6,20 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
-import { PlusCircle, Loader2 } from 'lucide-react'
+import { PlusCircle, Loader2, Upload, X } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 
 const INCOME_CATEGORIES = [
-  { value: 'salary', label: 'Salary', icon: '💼' },
-  { value: 'freelance', label: 'Freelance', icon: '💻' },
-  { value: 'business', label: 'Business', icon: '🏢' },
-  { value: 'investment', label: 'Investment Returns', icon: '📈' },
-  { value: 'rental', label: 'Rental Income', icon: '🏠' },
-  { value: 'bonus', label: 'Bonus', icon: '🎁' },
-  { value: 'other', label: 'Other', icon: '💰' },
+  { value: 'Salary', label: 'Salary', icon: '💼' },
+  { value: 'Freelance', label: 'Freelance', icon: '💻' },
+  { value: 'Business', label: 'Business', icon: '🏢' },
+  { value: 'Investment Returns', label: 'Investment Returns', icon: '📈' },
+  { value: 'Rental Income', label: 'Rental Income', icon: '🏠' },
+  { value: 'Bonus', label: 'Bonus', icon: '🎁' },
+  { value: 'Gift', label: 'Gift', icon: '🎁' },
+  { value: 'Refund', label: 'Refund', icon: '💵' },
+  { value: 'custom', label: '+ Add Custom Category', icon: '✨' },
 ]
 
 interface AddIncomeFormProps {
@@ -32,12 +34,44 @@ export function AddIncomeForm({ onSuccess }: AddIncomeFormProps) {
     amount: '',
     description: '',
     category: '',
+    customCategory: '',
     date: new Date().toISOString().split('T')[0],
     accountId: '',
   })
+  const [receiptFile, setReceiptFile] = useState<File | null>(null)
+  const [showCustomCategory, setShowCustomCategory] = useState(false)
+
+  const handleCategoryChange = (value: string) => {
+    if (value === 'custom') {
+      setShowCustomCategory(true)
+      setFormData({ ...formData, category: '' })
+    } else {
+      setShowCustomCategory(false)
+      setFormData({ ...formData, category: value, customCategory: '' })
+    }
+  }
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0]
+      if (file.size > 5 * 1024 * 1024) { // 5MB limit
+        toast.error('File size must be less than 5MB')
+        return
+      }
+      setReceiptFile(file)
+    }
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+
+    const categoryToUse = showCustomCategory ? formData.customCategory : formData.category
+
+    if (!formData.amount || !categoryToUse || !formData.description) {
+      toast.error('Please fill in all required fields')
+      return
+    }
+
     setLoading(true)
 
     try {
@@ -47,10 +81,11 @@ export function AddIncomeForm({ onSuccess }: AddIncomeFormProps) {
         body: JSON.stringify({
           amount: parseFloat(formData.amount),
           description: formData.description,
-          category: formData.category,
+          category: categoryToUse,
           type: 'income',
           date: new Date(formData.date || new Date().toISOString()),
           accountId: formData.accountId || null,
+          hasReceipt: receiptFile !== null,
         }),
       })
 
@@ -60,14 +95,19 @@ export function AddIncomeForm({ onSuccess }: AddIncomeFormProps) {
       }
 
       toast.success('Income added successfully!')
-      setOpen(false)
+
+      // Reset form
       setFormData({
         amount: '',
         description: '',
         category: '',
+        customCategory: '',
         date: new Date().toISOString().split('T')[0],
         accountId: '',
       })
+      setReceiptFile(null)
+      setShowCustomCategory(false)
+      setOpen(false)
 
       router.refresh()
       onSuccess?.()
@@ -81,7 +121,7 @@ export function AddIncomeForm({ onSuccess }: AddIncomeFormProps) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="w-full" size="sm">
+        <Button className="w-full transition-all duration-300 hover:scale-105" size="sm">
           <PlusCircle className="h-4 w-4 mr-2" />
           Add Income
         </Button>
@@ -109,25 +149,48 @@ export function AddIncomeForm({ onSuccess }: AddIncomeFormProps) {
 
           <div className="space-y-2">
             <Label htmlFor="category">Category</Label>
-            <Select
-              value={formData.category}
-              onValueChange={(value) => setFormData({ ...formData, category: value })}
-              required
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select category" />
-              </SelectTrigger>
-              <SelectContent>
-                {INCOME_CATEGORIES.map((cat) => (
-                  <SelectItem key={cat.value} value={cat.value}>
-                    <span className="flex items-center gap-2">
-                      <span>{cat.icon}</span>
-                      <span>{cat.label}</span>
-                    </span>
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            {!showCustomCategory ? (
+              <Select
+                value={formData.category}
+                onValueChange={handleCategoryChange}
+                required
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select category" />
+                </SelectTrigger>
+                <SelectContent>
+                  {INCOME_CATEGORIES.map((cat) => (
+                    <SelectItem key={cat.value} value={cat.value}>
+                      <span className="flex items-center gap-2">
+                        <span>{cat.icon}</span>
+                        <span>{cat.label}</span>
+                      </span>
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            ) : (
+              <div className="flex gap-2">
+                <Input
+                  id="customCategory"
+                  placeholder="Enter custom category"
+                  value={formData.customCategory}
+                  onChange={(e) => setFormData({ ...formData, customCategory: e.target.value })}
+                  required
+                />
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="icon"
+                  onClick={() => {
+                    setShowCustomCategory(false)
+                    setFormData({ ...formData, customCategory: '' })
+                  }}
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
+            )}
           </div>
 
           <div className="space-y-2">
@@ -150,6 +213,43 @@ export function AddIncomeForm({ onSuccess }: AddIncomeFormProps) {
               onChange={(e) => setFormData({ ...formData, date: e.target.value })}
               required
             />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="receipt">Receipt (Optional)</Label>
+            <div className="flex items-center gap-2">
+              <Input
+                id="receipt"
+                type="file"
+                accept="image/*,.pdf"
+                onChange={handleFileChange}
+                className="hidden"
+              />
+              <Button
+                type="button"
+                variant="outline"
+                className="w-full"
+                onClick={() => document.getElementById('receipt')?.click()}
+              >
+                <Upload className="h-4 w-4 mr-2" />
+                {receiptFile ? receiptFile.name : 'Upload Receipt'}
+              </Button>
+              {receiptFile && (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setReceiptFile(null)}
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              )}
+            </div>
+            {receiptFile && (
+              <p className="text-xs text-muted-foreground">
+                {(receiptFile.size / 1024).toFixed(1)} KB
+              </p>
+            )}
           </div>
 
           <div className="flex gap-3 pt-4">
