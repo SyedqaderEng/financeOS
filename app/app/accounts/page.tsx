@@ -1,17 +1,19 @@
-import { redirect } from 'next/navigation'
-import { getCurrentUser } from '@/lib/auth'
+"use client"
+
+import { useState } from 'react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { ArrowLeft, Plus } from 'lucide-react'
 import { AccountsTable } from '@/components/accounts/accounts-table'
+import { AddAccountDialog } from '@/components/accounts/add-account-dialog'
 
-export default async function AccountsPage() {
-  let user
-  try {
-    user = await getCurrentUser()
-  } catch {
-    redirect('/login')
+export default function AccountsPage() {
+  const [addDialogOpen, setAddDialogOpen] = useState(false)
+  const [refreshTrigger, setRefreshTrigger] = useState(0)
+
+  const handleAccountAdded = () => {
+    setRefreshTrigger(prev => prev + 1)
   }
 
   return (
@@ -31,11 +33,9 @@ export default async function AccountsPage() {
             </p>
           </div>
         </div>
-        <Button asChild>
-          <Link href="/app/dashboard">
-            <Plus className="h-4 w-4 mr-2" />
-            Add Account
-          </Link>
+        <Button onClick={() => setAddDialogOpen(true)}>
+          <Plus className="h-4 w-4 mr-2" />
+          Add Account
         </Button>
       </div>
 
@@ -46,9 +46,16 @@ export default async function AccountsPage() {
           <CardDescription>View, edit, and manage your accounts</CardDescription>
         </CardHeader>
         <CardContent>
-          <AccountsTable />
+          <AccountsTable key={refreshTrigger} />
         </CardContent>
       </Card>
+
+      {/* Add Account Dialog */}
+      <AddAccountDialog
+        open={addDialogOpen}
+        onOpenChange={setAddDialogOpen}
+        onSuccess={handleAccountAdded}
+      />
     </div>
   )
 }
