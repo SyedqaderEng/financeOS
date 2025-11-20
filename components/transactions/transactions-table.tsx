@@ -29,7 +29,11 @@ interface Transaction {
   description: string
   amount: number
   transactionType: 'income' | 'expense'
-  category: string
+  category: {
+    id: string
+    name: string
+    icon?: string
+  }
   account: {
     id: string
     name: string
@@ -67,7 +71,7 @@ export function TransactionsTable() {
 
         // Extract unique categories
         const uniqueCategories = Array.from(
-          new Set(result.data.map((t: Transaction) => t.category))
+          new Set(result.data.map((t: Transaction) => t.category.name))
         ) as string[]
         setCategories(uniqueCategories.sort())
       }
@@ -109,7 +113,7 @@ export function TransactionsTable() {
       ...filteredTransactions.map(t => [
         new Date(t.date).toLocaleDateString(),
         t.description,
-        t.category,
+        t.category.name,
         t.account.name,
         t.transactionType,
         t.amount.toString()
@@ -146,10 +150,10 @@ export function TransactionsTable() {
   const filteredTransactions = transactions.filter(transaction => {
     const matchesSearch = searchQuery === '' ||
       transaction.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      transaction.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      transaction.category.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       transaction.account.name.toLowerCase().includes(searchQuery.toLowerCase())
 
-    const matchesCategory = categoryFilter === 'all' || transaction.category === categoryFilter
+    const matchesCategory = categoryFilter === 'all' || transaction.category.name === categoryFilter
 
     return matchesSearch && matchesCategory
   })
@@ -249,7 +253,7 @@ export function TransactionsTable() {
                   </TableCell>
                   <TableCell>{transaction.description}</TableCell>
                   <TableCell>
-                    <Badge variant="outline">{transaction.category}</Badge>
+                    <Badge variant="outline">{transaction.category.name}</Badge>
                   </TableCell>
                   <TableCell>{transaction.account.name}</TableCell>
                   <TableCell>

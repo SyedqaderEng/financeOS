@@ -26,13 +26,16 @@ export async function GET(
           include: {
             account: {
               select: { name: true }
+            },
+            category: {
+              select: { name: true }
             }
           }
         })
         data = transactions.map(t => ({
           date: t.date.toISOString().split('T')[0],
           description: t.description,
-          category: t.category || 'Uncategorized',
+          category: t.category?.name || 'Uncategorized',
           type: t.transactionType,
           amount: parseFloat(t.amount.toString()),
           account: t.account.name,

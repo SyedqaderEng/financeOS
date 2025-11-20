@@ -1,7 +1,8 @@
 'use client';
 
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { FeatureModal } from '@/components/feature-modal';
 import { ChevronDown, Mail, Twitter, Facebook, Linkedin, Instagram } from 'lucide-react';
@@ -175,8 +176,27 @@ const FAQ_ITEMS = [
 ];
 
 export default function LandingPage() {
+  const router = useRouter();
   const [selectedFeature, setSelectedFeature] = useState<string | null>(null);
   const [expandedFaq, setExpandedFaq] = useState<number | null>(null);
+
+  useEffect(() => {
+    // Check if user is already logged in
+    const checkSession = async () => {
+      try {
+        const response = await fetch('/api/user/profile');
+        if (response.ok) {
+          // User is logged in, redirect to dashboard
+          router.push('/app/dashboard');
+        }
+      } catch (error) {
+        // User is not logged in, stay on landing page
+        console.log('No active session');
+      }
+    };
+
+    checkSession();
+  }, [router]);
 
   const getFeatureData = (featureKey: string) => {
     return FEATURES[featureKey as keyof typeof FEATURES] || null;

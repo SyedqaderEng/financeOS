@@ -1,8 +1,8 @@
 "use client"
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import {
   LayoutDashboard,
   Wallet,
@@ -13,10 +13,22 @@ import {
   Settings,
   Menu,
   X,
-  ChevronLeft
+  ChevronLeft,
+  LogOut,
+  User,
+  ChevronDown
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
+import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 
 const navigation = [
   { name: 'Dashboard', href: '/app/dashboard', icon: LayoutDashboard },
@@ -30,8 +42,52 @@ const navigation = [
 
 export function Sidebar() {
   const pathname = usePathname()
+  const router = useRouter()
   const [isCollapsed, setIsCollapsed] = useState(false)
   const [isMobileOpen, setIsMobileOpen] = useState(false)
+  const [userName, setUserName] = useState('User')
+  const [userEmail, setUserEmail] = useState('')
+
+  useEffect(() => {
+    // Fetch user data
+    const fetchUser = async () => {
+      try {
+        const response = await fetch('/api/user/profile')
+        if (response.ok) {
+          const data = await response.json()
+          if (data.success && data.data) {
+            setUserName(data.data.name || 'User')
+            setUserEmail(data.data.email || '')
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching user:', error)
+      }
+    }
+    fetchUser()
+  }, [])
+
+  const handleLogout = async () => {
+    try {
+      const response = await fetch('/api/auth/logout', {
+        method: 'POST',
+      })
+      if (response.ok) {
+        router.push('/login')
+      }
+    } catch (error) {
+      console.error('Error logging out:', error)
+    }
+  }
+
+  const getUserInitials = (name: string) => {
+    return name
+      .split(' ')
+      .map(n => n[0])
+      .join('')
+      .toUpperCase()
+      .slice(0, 2)
+  }
 
   return (
     <>
@@ -119,15 +175,76 @@ export function Sidebar() {
             })}
           </nav>
 
-          {/* Footer */}
-          {!isCollapsed && (
-            <div className="p-4 border-t">
-              <div className="text-xs text-muted-foreground">
-                <p>Phase 3: Dashboard</p>
-                <p className="text-[10px] opacity-50">FinanceOS v1.0</p>
-              </div>
-            </div>
-          )}
+          {/* User Profile */}
+          <div className="p-4 border-t">
+            {!isCollapsed ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" className="w-full justify-start gap-3 h-auto py-2 px-3 hover:bg-accent">
+                    <Avatar className="h-8 w-8">
+                      <AvatarFallback className="bg-primary/10 text-primary font-semibold">
+                        {getUserInitials(userName)}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="flex-1 text-left min-w-0">
+                      <p className="text-sm font-medium truncate">{userName}</p>
+                      {userEmail && (
+                        <p className="text-xs text-muted-foreground truncate">{userEmail}</p>
+                      )}
+                    </div>
+                    <ChevronDown className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56">
+                  <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem asChild>
+                    <Link href="/app/settings" className="cursor-pointer">
+                      <User className="mr-2 h-4 w-4" />
+                      Profile Settings
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-destructive focus:text-destructive">
+                    <LogOut className="mr-2 h-4 w-4" />
+                    Logout
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon" className="w-full">
+                    <Avatar className="h-8 w-8">
+                      <AvatarFallback className="bg-primary/10 text-primary font-semibold text-xs">
+                        {getUserInitials(userName)}
+                      </AvatarFallback>
+                    </Avatar>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56">
+                  <DropdownMenuLabel>
+                    <div>
+                      <p className="font-medium">{userName}</p>
+                      {userEmail && <p className="text-xs text-muted-foreground font-normal">{userEmail}</p>}
+                    </div>
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem asChild>
+                    <Link href="/app/settings" className="cursor-pointer">
+                      <User className="mr-2 h-4 w-4" />
+                      Profile Settings
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-destructive focus:text-destructive">
+                    <LogOut className="mr-2 h-4 w-4" />
+                    Logout
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            )}
+          </div>
         </div>
       </aside>
 
@@ -193,15 +310,76 @@ export function Sidebar() {
             })}
           </nav>
 
-          {/* Footer */}
-          {!isCollapsed && (
-            <div className="p-4 border-t">
-              <div className="text-xs text-muted-foreground">
-                <p>Phase 3: Dashboard</p>
-                <p className="text-[10px] opacity-50">FinanceOS v1.0</p>
-              </div>
-            </div>
-          )}
+          {/* User Profile */}
+          <div className="p-4 border-t">
+            {!isCollapsed ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" className="w-full justify-start gap-3 h-auto py-2 px-3 hover:bg-accent">
+                    <Avatar className="h-8 w-8">
+                      <AvatarFallback className="bg-primary/10 text-primary font-semibold">
+                        {getUserInitials(userName)}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="flex-1 text-left min-w-0">
+                      <p className="text-sm font-medium truncate">{userName}</p>
+                      {userEmail && (
+                        <p className="text-xs text-muted-foreground truncate">{userEmail}</p>
+                      )}
+                    </div>
+                    <ChevronDown className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56">
+                  <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem asChild>
+                    <Link href="/app/settings" className="cursor-pointer">
+                      <User className="mr-2 h-4 w-4" />
+                      Profile Settings
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-destructive focus:text-destructive">
+                    <LogOut className="mr-2 h-4 w-4" />
+                    Logout
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon" className="w-full">
+                    <Avatar className="h-8 w-8">
+                      <AvatarFallback className="bg-primary/10 text-primary font-semibold text-xs">
+                        {getUserInitials(userName)}
+                      </AvatarFallback>
+                    </Avatar>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56">
+                  <DropdownMenuLabel>
+                    <div>
+                      <p className="font-medium">{userName}</p>
+                      {userEmail && <p className="text-xs text-muted-foreground font-normal">{userEmail}</p>}
+                    </div>
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem asChild>
+                    <Link href="/app/settings" className="cursor-pointer">
+                      <User className="mr-2 h-4 w-4" />
+                      Profile Settings
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-destructive focus:text-destructive">
+                    <LogOut className="mr-2 h-4 w-4" />
+                    Logout
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            )}
+          </div>
         </div>
       </aside>
     </>
