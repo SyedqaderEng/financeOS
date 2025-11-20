@@ -5,12 +5,10 @@ import { Wallet, TrendingUp, TrendingDown, DollarSign } from 'lucide-react'
 import { KPICard } from '@/components/dashboard/kpi-card'
 import { CashFlowChartV2 } from '@/components/dashboard/cash-flow-chart-v2'
 import { RecentTransactionsV2 } from '@/components/dashboard/recent-transactions-v2'
-import { AccountOverviewV2 } from '@/components/dashboard/account-overview-v2'
 import { BudgetProgressV2 } from '@/components/dashboard/budget-progress-v2'
 import { CollapsiblePanel } from '@/components/dashboard/collapsible-panel'
 import { AddIncomeForm } from '@/components/forms/add-income-form'
 import { AddExpenseForm } from '@/components/forms/add-expense-form'
-import { AddAccountForm } from '@/components/forms/add-account-form'
 import { AddBudgetForm } from '@/components/forms/add-budget-form'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -240,17 +238,6 @@ export function DashboardContentV2({ userName, userEmail }: DashboardContentProp
                     Financial Goals
                   </Link>
                 </Button>
-              </CardContent>
-            </Card>
-
-            {/* Accounts Section */}
-            <Card className="transition-all duration-300 hover:shadow-lg">
-              <CardHeader>
-                <CardTitle className="text-base">Accounts</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <AddAccountForm onSuccess={handleDataChange} />
-                <AccountOverviewV2 isEmpty={isEmpty} key={refreshKey} />
               </CardContent>
             </Card>
           </div>
