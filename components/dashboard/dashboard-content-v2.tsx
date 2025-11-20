@@ -153,17 +153,6 @@ export function DashboardContentV2({ userName, userEmail }: DashboardContentProp
 
       {/* Main Content with Collapsible Panels */}
       <div className="flex gap-4">
-        {/* Left Panel - Accounts */}
-        <CollapsiblePanel side="left" defaultCollapsed={false} className="hidden lg:block">
-          <div className="space-y-6">
-            <div>
-              <h3 className="text-lg font-semibold mb-4">Accounts</h3>
-              <AddAccountForm onSuccess={handleDataChange} />
-            </div>
-            <AccountOverviewV2 isEmpty={isEmpty} key={refreshKey} />
-          </div>
-        </CollapsiblePanel>
-
         {/* Center Content - Cash Flow & Transactions */}
         <div className="flex-1 space-y-6 min-w-0">
           <CashFlowChartV2 isEmpty={isEmpty} isLoading={loading} key={refreshKey} />
@@ -251,6 +240,17 @@ export function DashboardContentV2({ userName, userEmail }: DashboardContentProp
                     Financial Goals
                   </Link>
                 </Button>
+              </CardContent>
+            </Card>
+
+            {/* Accounts Section */}
+            <Card className="transition-all duration-300 hover:shadow-lg">
+              <CardHeader>
+                <CardTitle className="text-base">Accounts</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <AddAccountForm onSuccess={handleDataChange} />
+                <AccountOverviewV2 isEmpty={isEmpty} key={refreshKey} />
               </CardContent>
             </Card>
           </div>
