@@ -9,6 +9,9 @@ import { SpendingByCategoryChart } from '@/components/analytics/spending-by-cate
 import { MonthlyTrendsChart } from '@/components/analytics/monthly-trends-chart'
 import { FinancialHealthScore } from '@/components/analytics/financial-health-score'
 import { TopSpendingCategories } from '@/components/analytics/top-spending-categories'
+import { BudgetVsActualChart } from '@/components/analytics/budget-vs-actual-chart'
+import { NetWorthChart } from '@/components/analytics/net-worth-chart'
+import { ExportButton } from '@/components/export-button'
 
 export default function AnalyticsPage() {
   return (
@@ -28,6 +31,7 @@ export default function AnalyticsPage() {
             </p>
           </div>
         </div>
+        <ExportButton type="analytics" />
       </div>
 
       {/* Financial Health Score */}
@@ -44,6 +48,15 @@ export default function AnalyticsPage() {
 
       {/* Top Spending Categories */}
       <TopSpendingCategories />
+
+      {/* Additional Charts Grid */}
+      <div className="grid gap-6 md:grid-cols-2">
+        {/* Budget vs Actual */}
+        <BudgetVsActualChart />
+
+        {/* Net Worth Tracking */}
+        <NetWorthChart />
+      </div>
     </div>
   )
 }

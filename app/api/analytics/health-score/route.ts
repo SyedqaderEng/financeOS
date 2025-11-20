@@ -23,7 +23,22 @@ export async function GET(request: NextRequest) {
           lte: endOfMonth,
         },
       },
+      select: {
+        transactionType: true,
+        amount: true,
+        category: true,
+      },
     })
+
+    // Helper function to extract category name
+    const getCategoryName = (category: any): string => {
+      if (typeof category === 'string') {
+        return category || 'Uncategorized'
+      } else if (category && typeof category === 'object') {
+        return category.name || 'Uncategorized'
+      }
+      return 'Uncategorized'
+    }
 
     // Calculate income and expenses
     const income = transactions
@@ -77,7 +92,11 @@ export async function GET(request: NextRequest) {
     if (budgets.length > 0) {
       const budgetStats = budgets.map(b => {
         const spent = transactions
-          .filter(t => t.transactionType === 'expense' && t.category === b.categoryName)
+          .filter(t => {
+            if (t.transactionType !== 'expense') return false
+            const categoryName = getCategoryName(t.category)
+            return categoryName === b.categoryName
+          })
           .reduce((sum, t) => sum + parseFloat(t.amount.toString()), 0)
         const budgeted = parseFloat(b.allocatedAmount.toString())
         return spent <= budgeted ? 100 : Math.max(0, 100 - ((spent - budgeted) / budgeted) * 100)
