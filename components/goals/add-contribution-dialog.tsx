@@ -12,6 +12,7 @@ import {
 } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { Textarea } from '@/components/ui/textarea'
 import { toast } from 'sonner'
 
 interface Goal {
@@ -36,10 +37,12 @@ export function AddContributionDialog({
 }: AddContributionDialogProps) {
   const [loading, setLoading] = useState(false)
   const [amount, setAmount] = useState('')
+  const [notes, setNotes] = useState('')
 
   useEffect(() => {
     if (open) {
       setAmount('')
+      setNotes('')
     }
   }, [open])
 
@@ -63,13 +66,20 @@ export function AddContributionDialog({
         },
         body: JSON.stringify({
           amount: contributionAmount,
+          notes: notes || undefined,
         }),
       })
 
       const result = await response.json()
 
       if (result.success) {
-        toast.success(`Added ${formatCurrency(contributionAmount)} to ${goal.name}`)
+        if (result.goalCompleted) {
+          toast.success(`🎉 Congratulations! You've completed "${goal.name}"!`, {
+            duration: 5000,
+          })
+        } else {
+          toast.success(`Added ${formatCurrency(contributionAmount)} to ${goal.name}`)
+        }
         onSuccess()
         onOpenChange(false)
       } else {
@@ -140,6 +150,18 @@ export function AddContributionDialog({
               placeholder="0.00"
               required
               autoFocus
+            />
+          </div>
+
+          {/* Notes (Optional) */}
+          <div className="space-y-2">
+            <Label htmlFor="notes">Notes (Optional)</Label>
+            <Textarea
+              id="notes"
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
+              placeholder="Add a note about this contribution..."
+              rows={2}
             />
           </div>
 
