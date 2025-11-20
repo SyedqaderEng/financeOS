@@ -25,6 +25,10 @@ export async function GET(request: NextRequest) {
           gte: thirtyDaysAgo,
         },
       },
+      select: {
+        category: true,
+        amount: true,
+      },
     })
 
     // Get previous period (30-60 days ago)
@@ -37,26 +41,40 @@ export async function GET(request: NextRequest) {
           lt: thirtyDaysAgo,
         },
       },
+      select: {
+        category: true,
+        amount: true,
+      },
     })
+
+    // Helper function to extract category name
+    const getCategoryName = (category: any): string => {
+      if (typeof category === 'string') {
+        return category || 'Uncategorized'
+      } else if (category && typeof category === 'object') {
+        return category.name || 'Uncategorized'
+      }
+      return 'Uncategorized'
+    }
 
     // Calculate current period totals
     const currentMap: { [key: string]: { amount: number; count: number } } = {}
     currentPeriod.forEach(t => {
-      const category = t.category || 'Uncategorized'
+      const categoryName = getCategoryName(t.category)
       const amount = parseFloat(t.amount.toString())
-      if (!currentMap[category]) {
-        currentMap[category] = { amount: 0, count: 0 }
+      if (!currentMap[categoryName]) {
+        currentMap[categoryName] = { amount: 0, count: 0 }
       }
-      currentMap[category].amount += amount
-      currentMap[category].count += 1
+      currentMap[categoryName].amount += amount
+      currentMap[categoryName].count += 1
     })
 
     // Calculate previous period totals
     const previousMap: { [key: string]: number } = {}
     previousPeriod.forEach(t => {
-      const category = t.category || 'Uncategorized'
+      const categoryName = getCategoryName(t.category)
       const amount = parseFloat(t.amount.toString())
-      previousMap[category] = (previousMap[category] || 0) + amount
+      previousMap[categoryName] = (previousMap[categoryName] || 0) + amount
     })
 
     // Calculate total for percentage

@@ -43,14 +43,28 @@ export async function GET(request: NextRequest) {
           lte: endOfMonth,
         },
       },
+      select: {
+        category: true,
+        amount: true,
+      },
     })
+
+    // Helper function to extract category name
+    const getCategoryName = (category: any): string => {
+      if (typeof category === 'string') {
+        return category || 'Uncategorized'
+      } else if (category && typeof category === 'object') {
+        return category.name || 'Uncategorized'
+      }
+      return 'Uncategorized'
+    }
 
     // Calculate spending by category
     const spendingMap: { [key: string]: number } = {}
     transactions.forEach(t => {
-      const category = t.category || 'Uncategorized'
+      const categoryName = getCategoryName(t.category)
       const amount = parseFloat(t.amount.toString())
-      spendingMap[category] = (spendingMap[category] || 0) + amount
+      spendingMap[categoryName] = (spendingMap[categoryName] || 0) + amount
     })
 
     // Build budget vs actual data

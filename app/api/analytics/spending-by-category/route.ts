@@ -22,15 +22,29 @@ export async function GET(request: NextRequest) {
           gte: thirtyDaysAgo,
         },
       },
+      select: {
+        category: true,
+        amount: true,
+      },
     })
 
     // Group by category
     const categoryMap: { [key: string]: number } = {}
 
     transactions.forEach(t => {
-      const category = t.category || 'Uncategorized'
+      // Extract category name (handle both string and object cases)
+      let categoryName: string
+      if (typeof t.category === 'string') {
+        categoryName = t.category || 'Uncategorized'
+      } else if (t.category && typeof t.category === 'object') {
+        // If category is an object, try to get the name property
+        categoryName = (t.category as any).name || 'Uncategorized'
+      } else {
+        categoryName = 'Uncategorized'
+      }
+
       const amount = parseFloat(t.amount.toString())
-      categoryMap[category] = (categoryMap[category] || 0) + amount
+      categoryMap[categoryName] = (categoryMap[categoryName] || 0) + amount
     })
 
     // Calculate total
