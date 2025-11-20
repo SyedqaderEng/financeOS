@@ -16,7 +16,7 @@ export async function POST(
     const goalId = params.id
     const body = await request.json()
 
-    const { amount } = body
+    const { amount, notes } = body
 
     // Validate amount
     if (!amount || parseFloat(amount) <= 0) {
@@ -49,18 +49,33 @@ export async function POST(
     // Add the contribution
     const contributionAmount = parseFloat(amount)
     const newAmount = goal.currentAmount + contributionAmount
+    const wasCompleted = goal.currentAmount >= goal.targetAmount
+    const isNowCompleted = newAmount >= goal.targetAmount
 
-    const updatedGoal = await db.goal.update({
-      where: { id: goalId },
-      data: {
-        currentAmount: newAmount,
-      },
-    })
+    // Use transaction to ensure both updates happen
+    const [updatedGoal, contribution] = await db.$transaction([
+      db.goal.update({
+        where: { id: goalId },
+        data: {
+          currentAmount: newAmount,
+          status: isNowCompleted && !wasCompleted ? 'completed' : goal.status,
+        },
+      }),
+      db.goalContribution.create({
+        data: {
+          goalId,
+          amount: contributionAmount,
+          contributionDate: new Date(),
+          notes: notes || null,
+        },
+      }),
+    ])
 
     return NextResponse.json({
       success: true,
       data: updatedGoal,
-      message: `Added ${contributionAmount.toFixed(2)} to ${goal.name}`,
+      goalCompleted: isNowCompleted && !wasCompleted,
+      message: `Added $${contributionAmount.toFixed(2)} to ${goal.name}`,
     })
   } catch (error) {
     console.error('Error adding contribution:', error)

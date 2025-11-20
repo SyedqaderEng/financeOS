@@ -12,10 +12,11 @@ import {
 } from '@/components/ui/table'
 import { Badge } from '@/components/ui/badge'
 import { Progress } from '@/components/ui/progress'
-import { Pencil, Trash2, Target, TrendingUp, Plus } from 'lucide-react'
+import { Pencil, Trash2, Target, TrendingUp, Plus, History } from 'lucide-react'
 import { toast } from 'sonner'
 import { EditGoalDialog } from './edit-goal-dialog'
 import { AddContributionDialog } from './add-contribution-dialog'
+import { ContributionHistoryDialog } from './contribution-history-dialog'
 
 interface Goal {
   id: string
@@ -218,7 +219,7 @@ export function GoalsTable() {
                     {formatCurrency(goal.currentAmount)}
                   </TableCell>
                   <TableCell>
-                    <div className="space-y-1 min-w-[150px]">
+                    <div className="space-y-2 min-w-[150px]">
                       <div className="flex items-center justify-between text-xs">
                         <span className="text-muted-foreground">
                           {formatCurrency(remaining)} to go
@@ -232,6 +233,7 @@ export function GoalsTable() {
                         className="h-2"
                         indicatorClassName={getProgressColor(percentComplete)}
                       />
+                      <ContributionHistoryDialog goal={{ id: goal.id, name: goal.name }} />
                     </div>
                   </TableCell>
                   <TableCell>
