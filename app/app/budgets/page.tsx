@@ -1,17 +1,19 @@
-import { redirect } from 'next/navigation'
-import { getCurrentUser } from '@/lib/auth'
+"use client"
+
+import { useState } from 'react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { ArrowLeft, Plus } from 'lucide-react'
 import { BudgetsTable } from '@/components/budgets/budgets-table'
+import { AddBudgetDialog } from '@/components/budgets/add-budget-dialog'
 
-export default async function BudgetsPage() {
-  let user
-  try {
-    user = await getCurrentUser()
-  } catch {
-    redirect('/login')
+export default function BudgetsPage() {
+  const [addDialogOpen, setAddDialogOpen] = useState(false)
+  const [refreshTrigger, setRefreshTrigger] = useState(0)
+
+  const handleBudgetAdded = () => {
+    setRefreshTrigger(prev => prev + 1)
   }
 
   return (
@@ -31,11 +33,9 @@ export default async function BudgetsPage() {
             </p>
           </div>
         </div>
-        <Button asChild>
-          <Link href="/app/dashboard">
-            <Plus className="h-4 w-4 mr-2" />
-            Add Budget
-          </Link>
+        <Button onClick={() => setAddDialogOpen(true)}>
+          <Plus className="h-4 w-4 mr-2" />
+          Add Budget
         </Button>
       </div>
 
@@ -46,9 +46,16 @@ export default async function BudgetsPage() {
           <CardDescription>Track spending limits and get alerts when approaching budgets</CardDescription>
         </CardHeader>
         <CardContent>
-          <BudgetsTable />
+          <BudgetsTable key={refreshTrigger} />
         </CardContent>
       </Card>
+
+      {/* Add Budget Dialog */}
+      <AddBudgetDialog
+        open={addDialogOpen}
+        onOpenChange={setAddDialogOpen}
+        onSuccess={handleBudgetAdded}
+      />
     </div>
   )
 }
