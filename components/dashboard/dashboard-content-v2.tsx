@@ -173,16 +173,6 @@ export function DashboardContentV2({ userName, userEmail }: DashboardContentProp
           <div className="lg:hidden space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle>Accounts</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <AddAccountForm onSuccess={handleDataChange} />
-                <AccountOverviewV2 isEmpty={isEmpty} key={refreshKey} />
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
                 <CardTitle>Quick Actions</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
