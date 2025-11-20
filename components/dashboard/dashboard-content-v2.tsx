@@ -5,12 +5,10 @@ import { Wallet, TrendingUp, TrendingDown, DollarSign } from 'lucide-react'
 import { KPICard } from '@/components/dashboard/kpi-card'
 import { CashFlowChartV2 } from '@/components/dashboard/cash-flow-chart-v2'
 import { RecentTransactionsV2 } from '@/components/dashboard/recent-transactions-v2'
-import { AccountOverviewV2 } from '@/components/dashboard/account-overview-v2'
 import { BudgetProgressV2 } from '@/components/dashboard/budget-progress-v2'
 import { CollapsiblePanel } from '@/components/dashboard/collapsible-panel'
 import { AddIncomeForm } from '@/components/forms/add-income-form'
 import { AddExpenseForm } from '@/components/forms/add-expense-form'
-import { AddAccountForm } from '@/components/forms/add-account-form'
 import { AddBudgetForm } from '@/components/forms/add-budget-form'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -153,17 +151,6 @@ export function DashboardContentV2({ userName, userEmail }: DashboardContentProp
 
       {/* Main Content with Collapsible Panels */}
       <div className="flex gap-4">
-        {/* Left Panel - Accounts */}
-        <CollapsiblePanel side="left" defaultCollapsed={false} className="hidden lg:block">
-          <div className="space-y-6">
-            <div>
-              <h3 className="text-lg font-semibold mb-4">Accounts</h3>
-              <AddAccountForm onSuccess={handleDataChange} />
-            </div>
-            <AccountOverviewV2 isEmpty={isEmpty} key={refreshKey} />
-          </div>
-        </CollapsiblePanel>
-
         {/* Center Content - Cash Flow & Transactions */}
         <div className="flex-1 space-y-6 min-w-0">
           <CashFlowChartV2 isEmpty={isEmpty} isLoading={loading} key={refreshKey} />
