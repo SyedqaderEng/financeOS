@@ -233,7 +233,14 @@ export function GoalsTable() {
                         className="h-2"
                         indicatorClassName={getProgressColor(percentComplete)}
                       />
-                      <ContributionHistoryDialog goal={{ id: goal.id, name: goal.name }} />
+                      <ContributionHistoryDialog
+                        goal={{
+                          id: goal.id,
+                          name: goal.name,
+                          currentAmount: goal.currentAmount,
+                          targetAmount: goal.targetAmount
+                        }}
+                      />
                     </div>
                   </TableCell>
                   <TableCell>
