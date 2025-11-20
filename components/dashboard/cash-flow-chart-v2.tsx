@@ -131,6 +131,9 @@ export function CashFlowChartV2({ isLoading, isEmpty }: CashFlowChartV2Props) {
             backgroundColor: 'rgba(34, 197, 94, 0.1)',
             tension: 0.4,
             fill: true,
+            borderWidth: 2,
+            pointRadius: 4,
+            pointHoverRadius: 6,
           },
           {
             label: 'Expenses',
@@ -139,12 +142,15 @@ export function CashFlowChartV2({ isLoading, isEmpty }: CashFlowChartV2Props) {
             backgroundColor: 'rgba(239, 68, 68, 0.1)',
             tension: 0.4,
             fill: true,
+            borderWidth: 2,
+            pointRadius: 4,
+            pointHoverRadius: 6,
           },
         ],
       },
       options: {
         responsive: true,
-        maintainAspectRatio: true,
+        maintainAspectRatio: false,
         plugins: {
           legend: {
             display: true,
@@ -152,6 +158,24 @@ export function CashFlowChartV2({ isLoading, isEmpty }: CashFlowChartV2Props) {
             labels: {
               usePointStyle: true,
               padding: 15,
+              boxWidth: 8,
+              boxHeight: 8,
+            },
+          },
+          tooltip: {
+            mode: 'index',
+            intersect: false,
+            callbacks: {
+              label: function(context) {
+                let label = context.dataset.label || ''
+                if (label) {
+                  label += ': '
+                }
+                if (context.parsed.y !== null) {
+                  label += '$' + context.parsed.y.toLocaleString()
+                }
+                return label
+              },
             },
           },
         },
@@ -162,6 +186,14 @@ export function CashFlowChartV2({ isLoading, isEmpty }: CashFlowChartV2Props) {
               callback: function(value) {
                 return '$' + value.toLocaleString()
               },
+            },
+            grid: {
+              color: 'rgba(0, 0, 0, 0.05)',
+            },
+          },
+          x: {
+            grid: {
+              display: false,
             },
           },
         },
@@ -306,8 +338,8 @@ export function CashFlowChartV2({ isLoading, isEmpty }: CashFlowChartV2Props) {
         </div>
 
         {/* Chart */}
-        <div className="w-full h-[300px]">
-          <canvas ref={chartRef}></canvas>
+        <div className="w-full h-[300px] relative">
+          <canvas ref={chartRef} className="w-full h-full"></canvas>
         </div>
       </CardContent>
     </Card>
