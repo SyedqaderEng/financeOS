@@ -1,17 +1,21 @@
-import { redirect } from 'next/navigation'
-import { getCurrentUser } from '@/lib/auth'
+'use client'
+
+import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { ArrowLeft, Plus } from 'lucide-react'
+import { ArrowLeft } from 'lucide-react'
 import { GoalsTable } from '@/components/goals/goals-table'
+import { AddGoalDialog } from '@/components/goals/add-goal-dialog'
 
-export default async function GoalsPage() {
-  let user
-  try {
-    user = await getCurrentUser()
-  } catch {
-    redirect('/login')
+export default function GoalsPage() {
+  const router = useRouter()
+  const [refreshKey, setRefreshKey] = useState(0)
+
+  const handleGoalAdded = () => {
+    // Trigger refresh of GoalsTable
+    setRefreshKey(prev => prev + 1)
   }
 
   return (
@@ -31,12 +35,7 @@ export default async function GoalsPage() {
             </p>
           </div>
         </div>
-        <Button asChild>
-          <Link href="/app/dashboard">
-            <Plus className="h-4 w-4 mr-2" />
-            Add Goal
-          </Link>
-        </Button>
+        <AddGoalDialog onSuccess={handleGoalAdded} />
       </div>
 
       {/* Main Content */}
@@ -46,7 +45,7 @@ export default async function GoalsPage() {
           <CardDescription>Set targets, track progress, and achieve your financial dreams</CardDescription>
         </CardHeader>
         <CardContent>
-          <GoalsTable />
+          <GoalsTable key={refreshKey} />
         </CardContent>
       </Card>
     </div>
