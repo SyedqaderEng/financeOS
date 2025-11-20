@@ -176,19 +176,19 @@ export function AccountOverviewV2({ isEmpty }: AccountOverviewProps) {
   return (
     <Card className="transition-all duration-300 hover:shadow-lg">
       <CardHeader>
-        <div className="flex items-center justify-between">
-          <div>
-            <CardTitle className="flex items-center gap-2">
-              <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center">
-                <Wallet className="h-5 w-5 text-primary" />
-              </div>
-              Account Overview
-            </CardTitle>
-            <CardDescription className="mt-1">
-              {accounts.length} connected account{accounts.length !== 1 ? 's' : ''}
-            </CardDescription>
+        <div className="flex items-start justify-between gap-4">
+          <div className="flex items-start gap-3 flex-1 min-w-0">
+            <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0 mt-0.5">
+              <Wallet className="h-5 w-5 text-primary" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <CardTitle className="text-lg">Account Overview</CardTitle>
+              <CardDescription className="mt-1">
+                {accounts.length} connected account{accounts.length !== 1 ? 's' : ''}
+              </CardDescription>
+            </div>
           </div>
-          <Button asChild variant="ghost" size="sm">
+          <Button asChild variant="ghost" size="sm" className="flex-shrink-0">
             <Link href="/app/accounts">
               View All
               <ArrowRight className="ml-2 h-4 w-4" />
