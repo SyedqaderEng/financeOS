@@ -3,7 +3,8 @@ import { getCurrentUser } from '@/lib/auth'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { ArrowLeft, PiggyBank } from 'lucide-react'
+import { ArrowLeft, Plus } from 'lucide-react'
+import { BudgetsTable } from '@/components/budgets/budgets-table'
 
 export default async function BudgetsPage() {
   let user
@@ -30,25 +31,22 @@ export default async function BudgetsPage() {
             </p>
           </div>
         </div>
+        <Button asChild>
+          <Link href="/app/dashboard">
+            <Plus className="h-4 w-4 mr-2" />
+            Add Budget
+          </Link>
+        </Button>
       </div>
 
       {/* Main Content */}
       <Card>
         <CardHeader>
           <CardTitle>All Budgets</CardTitle>
-          <CardDescription>View, edit, and manage your budgets</CardDescription>
+          <CardDescription>Track spending limits and get alerts when approaching budgets</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="text-center py-12">
-            <PiggyBank className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-            <h3 className="text-lg font-semibold mb-2">Budgets Page</h3>
-            <p className="text-muted-foreground mb-4">
-              Full budget management with editing and detailed analytics coming soon
-            </p>
-            <Button asChild>
-              <Link href="/app/dashboard">Back to Dashboard</Link>
-            </Button>
-          </div>
+          <BudgetsTable />
         </CardContent>
       </Card>
     </div>

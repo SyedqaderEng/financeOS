@@ -1,9 +1,9 @@
 # FinanceOS Build Progress
 
-**Last Updated:** November 19, 2025
-**Current Phase:** Phase 4 (Complete)
-**Overall Progress:** 80%
-**Session Number:** 4 (continued)
+**Last Updated:** November 20, 2025
+**Current Phase:** Phase 5 (Near Complete - 95%)
+**Overall Progress:** 95%
+**Session Number:** 8 (Budget Management)
 
 ---
 
@@ -405,6 +405,7 @@
 - `3d39a50` - Improve cash flow chart and add enhanced income form with custom categories
 - `31d9068` - Create all missing pages to fix 404 navigation errors
 - `1fa24e0` - Complete Phase 4: Enhanced expense form and Quick Actions styling
+- `a48f0e5` - Add time period tabs and Chart.js visualization to cash flow chart
 
 **Status:** ✅ Complete - Full account and transaction creation with custom categories, receipt uploads, budget management, and all navigation working
 
@@ -412,18 +413,29 @@
 
 ## ❌ Pending Phases
 
-### Phase 5: Advanced Transaction & Account Management (Next)
-**Goal:** Full CRUD operations for transactions and accounts with filtering, search, and dedicated management pages
+### Phase 5: Advanced Transaction & Account Management (Near Complete - 95%)
+**Goal:** Full CRUD operations for transactions, accounts, and budgets with filtering, search, and dedicated management pages
 
-**Planned Features:**
-- Transaction editing and deletion
-- Account editing and deletion
-- Transaction filtering by date, category, type, account
-- Transaction search functionality
-- Full Transactions page with table view
-- Full Accounts page with account details
-- Budget editing and deletion
-- Export transactions to CSV
+**Completed Features:**
+- [x] Transaction editing ✅
+- [x] Transaction deletion ✅
+- [x] Transaction filtering (type, category) ✅
+- [x] Transaction search functionality ✅
+- [x] Full Transactions page with table view ✅
+- [x] Export transactions to CSV ✅
+- [x] Account editing ✅
+- [x] Account deletion ✅
+- [x] Full Accounts page with enhanced visuals ✅
+- [x] Account type visual system ✅
+- [x] **Budget editing ✅**
+- [x] **Budget deletion ✅**
+- [x] **Full Budgets page with progress visualization ✅**
+- [x] **Budget status tracking ✅**
+
+**Still Pending:**
+- [ ] Date range filtering for transactions
+- [ ] Pagination for large transaction lists
+- [ ] Bulk operations on transactions
 
 ### Phase 6: Financial Goals (Not Started)
 **Goal:** Users can set and track financial goals with progress visualization
@@ -811,6 +823,438 @@ Legend:
 
 ---
 
+### Session 5: Chart.js Integration & Professional Data Visualization
+
+### What Was Done This Session
+1. ✅ **Chart.js Installation & Integration**
+   - Installed `chart.js` package (v4.4.0)
+   - Registered Chart.js components for client-side rendering
+   - Added proper Chart cleanup on component unmount
+   - Integrated with React refs for canvas management
+
+2. ✅ **Cash Flow Chart Enhancement**
+   - **Time Period Selector**: Added tab buttons (7D, 1M, 3M, 1Y, All)
+   - **Dynamic Data Filtering**: Chart data adjusts based on selected period
+     * 7D/1M: Shows 1 month of data
+     * 3M: Shows 3 months (default)
+     * 1Y: Shows 12 months
+     * All: Shows up to 24 months
+   - **Professional Line Chart**: Replaced bar chart with smooth line visualization
+   - **Dual Dataset Display**: Income (green) and Expenses (red) lines
+   - **Filled Areas**: Semi-transparent fills under curves for better visual impact
+   - **Bezier Curves**: Smooth tension (0.4) for professional appearance
+   - **Interactive Legend**: Bottom-positioned legend with point-style indicators
+   - **Currency Formatting**: Y-axis shows values as currency ($)
+
+3. ✅ **Chart Design Matching Demo**
+   - Updated header to "Cash Flow Analysis"
+   - Time period tabs positioned in card header (right side)
+   - Active tab highlighting with primary color
+   - Hover effects on inactive tabs
+   - Responsive tab layout
+   - Proper spacing and typography
+
+4. ✅ **Component Architecture Updates**
+   - Added `useRef` hooks for chart canvas and instance
+   - Implemented proper chart instance cleanup
+   - Chart re-renders when data or time period changes
+   - Maintains existing summary cards (Income, Expenses, Net)
+   - Chart height set to 300px for optimal viewing
+
+### Files Modified
+- `components/dashboard/cash-flow-chart-v2.tsx` - Complete Chart.js integration
+- `package.json` - Added chart.js dependency
+- `package-lock.json` - Locked chart.js version
+
+### What's In Progress
+- None - Chart.js integration complete
+
+### Blockers Encountered
+- None
+
+### Key Technical Achievements
+- **Professional Charting**: Integrated industry-standard Chart.js library
+- **Interactive Time Periods**: Users can switch between 5 different time ranges
+- **Smooth Animations**: Bezier curves and transitions for professional appearance
+- **Real-time Data Binding**: Chart updates when transactions are added
+- **Responsive Design**: Chart scales properly on all device sizes
+- **Type Safety**: Full TypeScript support with Chart.js types
+- **Memory Management**: Proper cleanup prevents memory leaks
+
+### Testing Checklist
+- [x] Chart renders with real transaction data
+- [x] Time period tabs switch data correctly
+- [x] Chart is responsive on mobile/tablet/desktop
+- [x] Chart re-renders when new transactions added
+- [x] Currency formatting displays correctly on Y-axis
+- [x] Legend shows correct dataset names
+- [x] Chart cleanup prevents memory leaks
+- [x] Hover effects work on time period tabs
+- [x] Active tab highlighted correctly
+- [x] Summary cards still display totals
+
+### Commits This Session
+- `a48f0e5` - Add time period tabs and Chart.js visualization to cash flow chart
+
+---
+
+### Session 6: Advanced Transaction Management (Phase 5 Start)
+
+### What Was Done This Session
+1. ✅ **Full Transactions Page with Table View**
+   - Created comprehensive TransactionsTable component
+   - Professional table layout with all transaction details
+   - Date, description, category, account, type, and amount columns
+   - Color-coded income (green) and expense (red) badges
+   - Responsive design for mobile, tablet, and desktop
+   - Empty state messaging for no transactions
+
+2. ✅ **Advanced Search & Filtering**
+   - **Search Functionality**: Real-time search across description, category, and account
+   - **Type Filter**: Filter by All Types, Income, or Expense
+   - **Category Filter**: Dynamic category dropdown based on actual data
+   - **Results Counter**: Shows "X of Y transactions" matching filters
+   - Filter combinations work together (search + type + category)
+
+3. ✅ **Transaction Editing**
+   - Created EditTransactionDialog modal component
+   - Full form validation with all transaction fields
+   - Support for custom categories (same as add forms)
+   - Account switching with automatic balance recalculation
+   - Real-time form updates and validation
+   - Success/error toast notifications
+
+4. ✅ **Transaction Deletion**
+   - DELETE API endpoint with proper authorization
+   - Automatic account balance reversal on delete
+   - Confirmation dialog before deletion
+   - Real-time table refresh after deletion
+   - Proper error handling and user feedback
+
+5. ✅ **CSV Export Functionality**
+   - Export all filtered transactions to CSV
+   - Includes: Date, Description, Category, Account, Type, Amount
+   - Filename includes current date
+   - Toast notification on successful export
+
+6. ✅ **API Endpoints Implemented**
+   - **GET /api/transactions/:id**: Fetch single transaction with ownership verification
+   - **PUT /api/transactions/:id**: Update transaction with complex balance recalculation
+     * Handles account changes (debit old, credit new)
+     * Handles amount changes (calculate net difference)
+     * Handles type changes (income ↔ expense)
+     * Dynamic category creation
+   - **DELETE /api/transactions/:id**: Delete with automatic balance reversal
+     * Verifies ownership before deletion
+     * Reverses the transaction's effect on account balance
+     * Uses database transactions for consistency
+
+### Files Created/Modified
+- **New**: `components/transactions/transactions-table.tsx` (314 lines)
+- **New**: `components/transactions/edit-transaction-dialog.tsx` (352 lines)
+- **New**: `app/api/transactions/[id]/route.ts` (275 lines)
+- **Modified**: `app/app/transactions/page.tsx` - Integrated TransactionsTable
+
+### What's In Progress
+- None - All planned features for this session completed
+
+### Blockers Encountered
+- None
+
+### Key Technical Achievements
+- **Complex Balance Recalculation**: PUT endpoint handles all edge cases
+  * Account changes: reverses from old account, applies to new account
+  * Amount changes: calculates net difference and applies correctly
+  * Type changes: properly handles income ↔ expense conversions
+- **Database Transactions**: All balance updates use Prisma transactions for consistency
+- **Real-time UI Updates**: Table refreshes automatically after edit/delete
+- **CSV Export**: Client-side CSV generation with proper formatting
+- **Advanced Filtering**: Multiple filter combinations work seamlessly
+- **Form Validation**: Comprehensive validation matching add transaction forms
+
+### Testing Checklist
+- [x] Transactions page displays all transactions in table format
+- [x] Search filters transactions in real-time
+- [x] Type filter (Income/Expense/All) works correctly
+- [x] Category filter shows dynamic categories
+- [x] Edit button opens modal with pre-filled data
+- [x] Transaction can be edited and saved successfully
+- [x] Account balances update correctly on edit
+- [x] Delete button shows confirmation dialog
+- [x] Transaction can be deleted successfully
+- [x] Account balance reverses correctly on delete
+- [x] CSV export downloads file with correct data
+- [x] Responsive design works on mobile
+- [x] Toast notifications show for all actions
+- [ ] Test editing transaction to different account (Phase 5 continued)
+- [ ] Test editing transaction amount and type together (Phase 5 continued)
+
+### Phase 5 Progress Summary
+**Completed Features:**
+- [x] Full Transactions page with table view ✅
+- [x] Transaction search functionality ✅
+- [x] Transaction filtering (type, category) ✅
+- [x] Transaction editing with modal ✅
+- [x] Transaction deletion ✅
+- [x] CSV export ✅
+- [x] Real-time balance updates ✅
+
+**Still Pending:**
+- [ ] Account editing and deletion
+- [ ] Budget editing and deletion
+- [ ] Date range filtering
+- [ ] Pagination for large transaction lists
+- [ ] Bulk operations (delete multiple, categorize multiple)
+- [ ] Transaction details view
+
+### Commits This Session
+- `9c93990` - Implement Phase 5: Full transaction management with CRUD operations
+
+---
+
+### Session 7: Account Management & CRUD Operations (Phase 5 Continued)
+
+### What Was Done This Session
+1. ✅ **Full Accounts Page with Enhanced Table View**
+   - Created comprehensive AccountsTable component
+   - Professional table layout with account details
+   - Columns: Name (with icon), Type, Institution, Balance, Created Date, Actions
+   - Color-coded account type badges with custom icons
+   - Total balance summary card across all accounts
+   - Account type breakdown cards (Checking, Savings, Credit, Investment)
+   - Empty state with helpful messaging
+
+2. ✅ **Account Type Visual System**
+   - **Checking**: Blue color scheme with Wallet icon
+   - **Savings**: Green color scheme with PiggyBank icon
+   - **Credit**: Purple color scheme with CreditCard icon
+   - **Investment**: Orange color scheme with TrendingUp icon
+   - Each type has custom background, text, and border colors
+   - Icons displayed in colored rounded badges
+
+3. ✅ **Account Editing**
+   - Created EditAccountDialog modal component
+   - Full form validation for all account fields
+   - Editable fields: Name, Type, Balance, Institution
+   - Warning note about balance changes not creating transactions
+   - Success/error toast notifications
+   - Real-time table refresh after edit
+
+4. ✅ **Account Deletion**
+   - DELETE API endpoint with cascading deletes
+   - Confirmation dialog warning about transaction deletion
+   - Automatic deletion of all associated transactions
+   - Message showing number of transactions deleted
+   - Real-time table refresh after deletion
+
+5. ✅ **Account Summary Dashboard**
+   - Total balance across all accounts (prominent display)
+   - Active account count
+   - Balance breakdown by account type
+   - Color-coded type cards matching account badges
+   - Gradient background on summary card
+
+6. ✅ **API Endpoints Implemented**
+   - **GET /api/accounts/:id**: Fetch single account with transaction count
+   - **PUT /api/accounts/:id**: Update account with validation
+     * Account type validation (checking, savings, credit, investment)
+     * Ownership verification
+     * Optional institution field
+   - **DELETE /api/accounts/:id**: Delete account and cascade to transactions
+     * Returns count of deleted transactions
+     * Ownership verification
+
+### Files Created/Modified
+- **New**: `components/accounts/accounts-table.tsx` (283 lines)
+- **New**: `components/accounts/edit-account-dialog.tsx` (177 lines)
+- **New**: `app/api/accounts/[id]/route.ts` (200 lines)
+- **Modified**: `app/app/accounts/page.tsx` - Integrated AccountsTable
+
+### What's In Progress
+- None - All planned features for this session completed
+
+### Blockers Encountered
+- None
+
+### Key Technical Achievements
+- **Visual Account Type System**: Custom icons and color schemes for each type
+- **Cascading Deletes**: Proper relationship handling in database
+- **Transaction Count Display**: Shows number of transactions per account
+- **Balance Aggregation**: Real-time calculation of total and type balances
+- **Type Validation**: Server-side validation of account types
+- **Empty States**: Helpful messaging when no accounts exist
+- **Responsive Design**: Works on all device sizes
+
+### Testing Checklist
+- [x] Accounts page displays all accounts in table format
+- [x] Account type icons and colors display correctly
+- [x] Total balance calculates correctly across all accounts
+- [x] Type breakdown cards show correct balances
+- [x] Edit button opens modal with pre-filled data
+- [x] Account can be edited and saved successfully
+- [x] Balance updates reflect immediately in table
+- [x] Delete button shows confirmation dialog
+- [x] Account and transactions deleted successfully
+- [x] Delete confirmation shows transaction count
+- [x] Responsive design works on mobile
+- [x] Toast notifications show for all actions
+- [x] Empty state displays when no accounts
+
+### Phase 5 Progress Summary (Updated)
+**Completed Features:**
+- [x] Full Transactions page with table view ✅
+- [x] Transaction search functionality ✅
+- [x] Transaction filtering (type, category) ✅
+- [x] Transaction editing with modal ✅
+- [x] Transaction deletion ✅
+- [x] CSV export ✅
+- [x] Real-time balance updates ✅
+- [x] **Full Accounts page with table view ✅**
+- [x] **Account editing ✅**
+- [x] **Account deletion ✅**
+- [x] **Account type visual system ✅**
+
+**Still Pending:**
+- [ ] Budget editing and deletion
+- [ ] Date range filtering for transactions
+- [ ] Pagination for large transaction lists
+- [ ] Bulk operations (delete multiple, categorize multiple)
+- [ ] Transaction details/receipt view
+
+### Commits This Session
+- `5242011` - Implement full account management with CRUD operations
+
+---
+
+### Session 8: Budget Management & CRUD Operations (Phase 5 Continued)
+
+### What Was Done This Session
+1. ✅ **Full Budgets Page with Enhanced Table View**
+   - Created comprehensive BudgetsTable component
+   - Professional table layout with budget details
+   - Columns: Name, Category, Period, Amount, Progress, Status, Actions
+   - Real-time spending calculation and percentage tracking
+   - Color-coded progress bars (green/amber/red)
+   - Summary cards showing total budget, spending, and remaining
+   - Empty state with helpful messaging
+
+2. ✅ **Budget Progress Visualization**
+   - **Progress Bars**: Color-coded based on spending percentage
+     * Green: Under alert threshold
+     * Amber: At or above alert threshold
+     * Red: Over budget (100%+)
+   - **Status Badges**: Visual indicators with icons
+     * "On Track" - Green with CheckCircle icon
+     * "Warning" - Amber with AlertCircle icon
+     * "Over Budget" - Red with AlertCircle icon
+   - Percentage display with color coding
+
+3. ✅ **Budget Editing**
+   - Created EditBudgetDialog modal component
+   - Full form validation for all budget fields
+   - Editable fields: Name, Category, Amount, Period, Alert Threshold
+   - Info note about alert threshold functionality
+   - Success/error toast notifications
+   - Real-time table refresh after edit
+
+4. ✅ **Budget Deletion**
+   - DELETE API endpoint with proper authorization
+   - Confirmation dialog before deletion
+   - Real-time table refresh after deletion
+   - Proper error handling and user feedback
+
+5. ✅ **Budget Summary Dashboard**
+   - Total Budget card with gradient background
+   - Total Spending card with amber accent
+   - Remaining Budget card with green accent
+   - Real-time aggregation across all budgets
+
+6. ✅ **API Endpoints Implemented**
+   - **GET /api/budgets/:id**: Fetch single budget
+   - **PUT /api/budgets/:id**: Update budget with validation
+     * Period validation (weekly, monthly, quarterly, yearly)
+     * Alert threshold validation (1-100%)
+     * Ownership verification
+   - **DELETE /api/budgets/:id**: Delete budget
+     * Ownership verification
+     * Simple deletion (no cascading)
+
+### Files Created/Modified
+- **New**: `components/budgets/budgets-table.tsx` (294 lines)
+- **New**: `components/budgets/edit-budget-dialog.tsx` (166 lines)
+- **New**: `app/api/budgets/[id]/route.ts` (185 lines)
+- **Modified**: `app/app/budgets/page.tsx` - Integrated BudgetsTable
+
+### What's In Progress
+- None - All planned features for this session completed
+
+### Blockers Encountered
+- None
+
+### Key Technical Achievements
+- **Real-time Spending Calculation**: Progress updates with transaction changes
+- **Color-Coded Visual System**: Progress bars and status badges dynamically colored
+- **Alert Threshold System**: Customizable warning levels per budget
+- **Period Support**: Weekly, Monthly, Quarterly, Yearly budgets
+- **Summary Aggregations**: Real-time calculation of totals across all budgets
+- **Empty States**: Helpful messaging when no budgets exist
+- **Responsive Design**: Works on all device sizes
+
+### Testing Checklist
+- [x] Budgets page displays all budgets in table format
+- [x] Progress bars display with correct colors
+- [x] Status badges show correct status (On Track/Warning/Over Budget)
+- [x] Summary cards calculate totals correctly
+- [x] Edit button opens modal with pre-filled data
+- [x] Budget can be edited and saved successfully
+- [x] Budget updates reflect immediately in table
+- [x] Delete button shows confirmation dialog
+- [x] Budget deleted successfully
+- [x] Responsive design works on mobile
+- [x] Toast notifications show for all actions
+- [x] Empty state displays when no budgets
+- [x] Alert threshold affects color coding
+
+### Phase 5 Progress Summary (Updated)
+**Completed Features:**
+- [x] Full Transactions page with table view ✅
+- [x] Transaction search functionality ✅
+- [x] Transaction filtering (type, category) ✅
+- [x] Transaction editing with modal ✅
+- [x] Transaction deletion ✅
+- [x] CSV export ✅
+- [x] Real-time balance updates ✅
+- [x] Full Accounts page with table view ✅
+- [x] Account editing ✅
+- [x] Account deletion ✅
+- [x] Account type visual system ✅
+- [x] **Full Budgets page with table view ✅**
+- [x] **Budget editing ✅**
+- [x] **Budget deletion ✅**
+- [x] **Budget progress visualization ✅**
+- [x] **Budget status tracking ✅**
+
+**Still Pending:**
+- [ ] Date range filtering for transactions
+- [ ] Pagination for large transaction lists
+- [ ] Bulk operations (delete multiple transactions)
+- [ ] Transaction details/receipt view
+
+### Commits This Session
+- `3faab8d` - Implement full budget management with CRUD operations
+
+### Next Session Goals
+Complete Phase 5 with:
+- Date range filtering for transactions
+- Pagination for transaction table
+- Polish and final testing
+
+Then begin Phase 6:
+- Financial Goals implementation
+- Goal tracking and progress visualization
+
+---
+
 ## 📝 Next Steps
 
 ### Immediate Next Session (Priority Order)
@@ -848,6 +1292,8 @@ Legend:
 - [x] Recent Transactions widget with real data ✅
 - [x] Budget creation and tracking ✅
 - [x] Cash flow visualization ✅
+- [x] **Chart.js integration with time period selection ✅**
+- [x] **Professional line charts with interactive legends ✅**
 - [x] Custom categories for income/expense ✅
 - [x] Receipt upload functionality ✅
 - [x] Navigation pages created (no 404s) ✅
@@ -1123,7 +1569,8 @@ npx prisma validate      # Validate schema
 Phase 4 has been successfully completed with full transaction and budget management:
 - Custom category creation for income and expenses
 - Receipt upload with file validation (5MB limit)
-- Redesigned cash flow chart with dual bars showing income vs expense
+- **Professional Chart.js line charts with time period selection**
+- **Interactive data visualization with smooth animations**
 - All navigation pages created (Accounts, Transactions, Budgets, Goals)
 - Enhanced Quick Actions panel with gradients and icon badges
 - Budget management with real-time spending tracking
@@ -1136,6 +1583,8 @@ The dashboard is fully functional and production-ready. All Phase 4 quality stan
 - ✅ Comprehensive form validation
 - ✅ File upload functionality
 - ✅ Custom category system
+- ✅ **Chart.js professional data visualization**
+- ✅ **Time period filtering (7D, 1M, 3M, 1Y, All)**
 - ✅ Responsive design on all devices
 - ✅ Complete navigation (no 404 errors)
 - ✅ Professional UI with gradients and animations

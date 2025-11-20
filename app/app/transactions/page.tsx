@@ -3,7 +3,8 @@ import { getCurrentUser } from '@/lib/auth'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { ArrowLeft, Receipt } from 'lucide-react'
+import { ArrowLeft, Plus } from 'lucide-react'
+import { TransactionsTable } from '@/components/transactions/transactions-table'
 
 export default async function TransactionsPage() {
   let user
@@ -30,6 +31,12 @@ export default async function TransactionsPage() {
             </p>
           </div>
         </div>
+        <Button asChild>
+          <Link href="/app/dashboard">
+            <Plus className="h-4 w-4 mr-2" />
+            Add Transaction
+          </Link>
+        </Button>
       </div>
 
       {/* Main Content */}
@@ -39,16 +46,7 @@ export default async function TransactionsPage() {
           <CardDescription>Search, filter, and manage your financial transactions</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="text-center py-12">
-            <Receipt className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-            <h3 className="text-lg font-semibold mb-2">Transactions Page</h3>
-            <p className="text-muted-foreground mb-4">
-              Full transaction management with filters, search, and editing coming soon
-            </p>
-            <Button asChild>
-              <Link href="/app/dashboard">Back to Dashboard</Link>
-            </Button>
-          </div>
+          <TransactionsTable />
         </CardContent>
       </Card>
     </div>
