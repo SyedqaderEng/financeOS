@@ -1,9 +1,15 @@
 "use client"
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { TrendingUp, TrendingDown, ArrowUpRight, ArrowDownRight } from 'lucide-react'
+import { Chart, registerables } from 'chart.js'
+
+// Register Chart.js components
+if (typeof window !== 'undefined') {
+  Chart.register(...registerables)
+}
 
 interface MonthlyData {
   month: string
@@ -11,6 +17,8 @@ interface MonthlyData {
   expenses: number
   net: number
 }
+
+type TimePeriod = '7D' | '1M' | '3M' | '1Y' | 'All'
 
 interface CashFlowChartV2Props {
   isLoading?: boolean
@@ -20,11 +28,14 @@ interface CashFlowChartV2Props {
 export function CashFlowChartV2({ isLoading, isEmpty }: CashFlowChartV2Props) {
   const [data, setData] = useState<MonthlyData[]>([])
   const [loading, setLoading] = useState(true)
+  const [timePeriod, setTimePeriod] = useState<TimePeriod>('3M')
+  const chartRef = useRef<HTMLCanvasElement>(null)
+  const chartInstanceRef = useRef<Chart | null>(null)
 
   useEffect(() => {
     const fetchCashFlowData = async () => {
       try {
-        // Fetch transactions for the last 6 months
+        // Fetch transactions
         const response = await fetch('/api/transactions?limit=1000')
         const result = await response.json()
 
@@ -49,11 +60,29 @@ export function CashFlowChartV2({ isLoading, isEmpty }: CashFlowChartV2Props) {
             }
           })
 
-          // Convert to array and sort by date (last 6 months)
+          // Convert to array based on time period
           const now = new Date()
           const months: MonthlyData[] = []
 
-          for (let i = 5; i >= 0; i--) {
+          // Determine how many months to show based on time period
+          let monthsToShow = 3 // default for 3M
+          switch (timePeriod) {
+            case '7D':
+            case '1M':
+              monthsToShow = 1
+              break
+            case '3M':
+              monthsToShow = 3
+              break
+            case '1Y':
+              monthsToShow = 12
+              break
+            case 'All':
+              monthsToShow = 24 // Show up to 2 years
+              break
+          }
+
+          for (let i = monthsToShow - 1; i >= 0; i--) {
             const date = new Date(now.getFullYear(), now.getMonth() - i, 1)
             const monthKey = date.toLocaleString('en-US', { month: 'short', year: 'numeric' })
             const monthData = monthlyMap[monthKey] || { income: 0, expenses: 0 }
@@ -76,7 +105,75 @@ export function CashFlowChartV2({ isLoading, isEmpty }: CashFlowChartV2Props) {
     }
 
     fetchCashFlowData()
-  }, [])
+  }, [timePeriod])
+
+  // Chart.js rendering
+  useEffect(() => {
+    if (!chartRef.current || data.length === 0) return
+
+    // Destroy previous chart instance
+    if (chartInstanceRef.current) {
+      chartInstanceRef.current.destroy()
+    }
+
+    const ctx = chartRef.current.getContext('2d')
+    if (!ctx) return
+
+    chartInstanceRef.current = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: data.map(d => d.month),
+        datasets: [
+          {
+            label: 'Income',
+            data: data.map(d => d.income),
+            borderColor: 'rgb(34, 197, 94)',
+            backgroundColor: 'rgba(34, 197, 94, 0.1)',
+            tension: 0.4,
+            fill: true,
+          },
+          {
+            label: 'Expenses',
+            data: data.map(d => d.expenses),
+            borderColor: 'rgb(239, 68, 68)',
+            backgroundColor: 'rgba(239, 68, 68, 0.1)',
+            tension: 0.4,
+            fill: true,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        plugins: {
+          legend: {
+            display: true,
+            position: 'bottom',
+            labels: {
+              usePointStyle: true,
+              padding: 15,
+            },
+          },
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: {
+              callback: function(value) {
+                return '$' + value.toLocaleString()
+              },
+            },
+          },
+        },
+      },
+    })
+
+    return () => {
+      if (chartInstanceRef.current) {
+        chartInstanceRef.current.destroy()
+      }
+    }
+  }, [data])
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-US', {
@@ -142,10 +239,29 @@ export function CashFlowChartV2({ isLoading, isEmpty }: CashFlowChartV2Props) {
   return (
     <Card className="transition-all duration-300 hover:shadow-lg">
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          Cash Flow
-        </CardTitle>
-        <CardDescription>Your income and expenses over the last 6 months</CardDescription>
+        <div className="flex items-center justify-between">
+          <div>
+            <CardTitle className="flex items-center gap-2">
+              Cash Flow Analysis
+            </CardTitle>
+            <CardDescription>Your income and expenses over time</CardDescription>
+          </div>
+          <div className="flex gap-2">
+            {(['7D', '1M', '3M', '1Y', 'All'] as TimePeriod[]).map((period) => (
+              <button
+                key={period}
+                onClick={() => setTimePeriod(period)}
+                className={`px-3 py-1.5 text-xs font-semibold rounded-md transition-all ${
+                  timePeriod === period
+                    ? 'bg-primary text-primary-foreground'
+                    : 'bg-muted text-muted-foreground hover:bg-muted/80'
+                }`}
+              >
+                {period}
+              </button>
+            ))}
+          </div>
+        </div>
       </CardHeader>
       <CardContent>
         {/* Summary Cards */}
@@ -189,63 +305,9 @@ export function CashFlowChartV2({ isLoading, isEmpty }: CashFlowChartV2Props) {
           </div>
         </div>
 
-        {/* Bar Chart */}
-        <div className="space-y-3">
-          {data.map((month, index) => {
-            const netAmount = month.income - month.expenses
-            const isPositive = netAmount >= 0
-
-            return (
-              <div key={index} className="space-y-1.5">
-                <div className="flex items-center justify-between text-xs">
-                  <span className="font-medium text-muted-foreground w-20">{month.month}</span>
-                  <div className="flex items-center gap-3 text-xs">
-                    <div className="flex items-center gap-1">
-                      <div className="w-2 h-2 rounded-full bg-green-500" />
-                      <span className="text-muted-foreground">{formatCurrency(month.income)}</span>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <div className="w-2 h-2 rounded-full bg-red-500" />
-                      <span className="text-muted-foreground">{formatCurrency(month.expenses)}</span>
-                    </div>
-                    <span className={`font-semibold ${isPositive ? 'text-green-600 dark:text-green-500' : 'text-red-600 dark:text-red-500'}`}>
-                      {isPositive ? '+' : ''}{formatCurrency(netAmount)}
-                    </span>
-                  </div>
-                </div>
-
-                <div className="relative h-10">
-                  {/* Income bar */}
-                  <div className="absolute left-0 top-0 h-4 bg-green-500/80 hover:bg-green-500 rounded transition-all duration-300 flex items-center justify-start px-2"
-                    style={{ width: `${Math.max((month.income / maxValue) * 100, 1)}%` }}>
-                    {month.income > 0 && (
-                      <span className="text-[10px] text-white font-medium">Income</span>
-                    )}
-                  </div>
-
-                  {/* Expenses bar */}
-                  <div className="absolute left-0 bottom-0 h-4 bg-red-500/80 hover:bg-red-500 rounded transition-all duration-300 flex items-center justify-start px-2"
-                    style={{ width: `${Math.max((month.expenses / maxValue) * 100, 1)}%` }}>
-                    {month.expenses > 0 && (
-                      <span className="text-[10px] text-white font-medium">Expense</span>
-                    )}
-                  </div>
-                </div>
-              </div>
-            )
-          })}
-        </div>
-
-        {/* Legend */}
-        <div className="flex items-center justify-center gap-6 mt-6 pt-4 border-t">
-          <div className="flex items-center gap-2">
-            <div className="h-3 w-3 rounded-sm bg-gradient-to-r from-green-500 to-green-600" />
-            <span className="text-xs text-muted-foreground">Income</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="h-3 w-3 rounded-sm bg-gradient-to-r from-red-500 to-red-600" />
-            <span className="text-xs text-muted-foreground">Expenses</span>
-          </div>
+        {/* Chart */}
+        <div className="w-full h-[300px]">
+          <canvas ref={chartRef}></canvas>
         </div>
       </CardContent>
     </Card>
