@@ -61,6 +61,9 @@ model User {
   notifications          Notification[]
   userPreferences        UserPreferences?
   auditLogs              AuditLog[]
+  organizationMembers    OrganizationMember[]
+  apiKeys                ApiKey[]
+  ownedOrganizations     Organization[] @relation("OrganizationOwner")
 
   @@index([email])
   @@index([subscriptionPlan, subscriptionStatus])
@@ -512,10 +515,9 @@ model AIInsight {
 model NewsItem {
   id           String   @id @default(uuid())
   source       String
-  sourceUrl    String   @map("source_url")
+  link         String   @unique
   title        String
-  summary      String?
-  content      String?
+  description  String?
   imageUrl     String?  @map("image_url")
   publishedAt  DateTime @map("published_at")
   category     String   // market, personal_finance, crypto, stocks
@@ -525,6 +527,7 @@ model NewsItem {
 
   @@index([category, publishedAt(sort: Desc)])
   @@index([symbols])
+  @@index([publishedAt(sort: Desc)])
   @@map("news_items")
 }
 
@@ -597,23 +600,147 @@ model UserPreferences {
 }
 
 // ============================================
+// ORGANIZATIONS & TEAM MANAGEMENT
+// ============================================
+
+model Organization {
+  id                  String   @id @default(uuid())
+  name                String
+  slug                String   @unique
+  description         String?
+  logoUrl             String?  @map("logo_url")
+  websiteUrl          String?  @map("website_url")
+  industry            String?
+  size                String?  // 1-10, 11-50, 51-200, 201-500, 501+
+  ownerId             String   @map("owner_id")
+  subscriptionPlan    String   @default("business") @map("subscription_plan") // business, enterprise
+  subscriptionStatus  String   @default("trial") @map("subscription_status") // trial, active, suspended, canceled
+  subscriptionEndsAt  DateTime? @map("subscription_ends_at")
+  maxSeats            Int      @default(10) @map("max_seats")
+  stripeCustomerId    String?  @map("stripe_customer_id")
+  billingEmail        String?  @map("billing_email")
+  taxId               String?  @map("tax_id")
+  settings            Json     @default("{}") // organization-wide settings
+  createdAt           DateTime @default(now()) @map("created_at")
+  updatedAt           DateTime @updatedAt @map("updated_at")
+
+  owner               User                   @relation("OrganizationOwner", fields: [ownerId], references: [id], onDelete: Cascade)
+  members             OrganizationMember[]
+  apiKeys             ApiKey[]
+  webhooks            Webhook[]
+
+  @@index([slug])
+  @@index([ownerId])
+  @@map("organizations")
+}
+
+model OrganizationMember {
+  id              String    @id @default(uuid())
+  organizationId  String    @map("organization_id")
+  userId          String    @map("user_id")
+  role            String    // owner, admin, manager, member, viewer
+  permissions     Json      @default("{}") // custom permissions override
+  invitedBy       String?   @map("invited_by")
+  invitedAt       DateTime? @map("invited_at")
+  joinedAt        DateTime  @default(now()) @map("joined_at")
+  lastActiveAt    DateTime? @map("last_active_at")
+  status          String    @default("active") // active, suspended, inactive
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+
+  organization    Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  user            User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([organizationId, userId])
+  @@index([organizationId])
+  @@index([userId])
+  @@index([role])
+  @@map("organization_members")
+}
+
+model ApiKey {
+  id              String    @id @default(uuid())
+  organizationId  String?   @map("organization_id")
+  userId          String    @map("user_id")
+  name            String
+  key             String    @unique // hashed
+  keyPrefix       String    @map("key_prefix") // First 8 chars for display
+  scopes          String[]  // read:transactions, write:budgets, etc.
+  lastUsedAt      DateTime? @map("last_used_at")
+  lastUsedIp      String?   @map("last_used_ip")
+  expiresAt       DateTime? @map("expires_at")
+  isActive        Boolean   @default(true) @map("is_active")
+  rateLimit       Int       @default(1000) @map("rate_limit") // requests per hour
+  createdAt       DateTime  @default(now()) @map("created_at")
+  revokedAt       DateTime? @map("revoked_at")
+
+  organization    Organization? @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  user            User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([key])
+  @@index([organizationId])
+  @@index([userId])
+  @@map("api_keys")
+}
+
+model Webhook {
+  id              String    @id @default(uuid())
+  organizationId  String    @map("organization_id")
+  url             String
+  secret          String    // for signature verification
+  events          String[]  // transaction.created, budget.exceeded, etc.
+  isActive        Boolean   @default(true) @map("is_active")
+  lastTriggeredAt DateTime? @map("last_triggered_at")
+  failureCount    Int       @default(0) @map("failure_count")
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+
+  organization    Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  deliveries      WebhookDelivery[]
+
+  @@index([organizationId])
+  @@map("webhooks")
+}
+
+model WebhookDelivery {
+  id              String    @id @default(uuid())
+  webhookId       String    @map("webhook_id")
+  event           String
+  payload         Json
+  responseStatus  Int?      @map("response_status")
+  responseBody    String?   @map("response_body")
+  errorMessage    String?   @map("error_message")
+  attemptCount    Int       @default(1) @map("attempt_count")
+  deliveredAt     DateTime? @map("delivered_at")
+  createdAt       DateTime  @default(now()) @map("created_at")
+
+  webhook         Webhook   @relation(fields: [webhookId], references: [id], onDelete: Cascade)
+
+  @@index([webhookId])
+  @@index([createdAt(sort: Desc)])
+  @@map("webhook_deliveries")
+}
+
+// ============================================
 // AUDIT LOG
 // ============================================
 
 model AuditLog {
-  id           String   @id @default(uuid())
-  userId       String?  @map("user_id")
-  action       String   // login, logout, create_transaction, delete_account, etc.
-  resourceType String?  @map("resource_type") // transaction, account, budget, etc.
-  resourceId   String?  @map("resource_id")
-  metadata     Json?    // additional context
-  ipAddress    String?  @map("ip_address")
-  userAgent    String?  @map("user_agent")
-  createdAt    DateTime @default(now()) @map("created_at")
+  id              String   @id @default(uuid())
+  userId          String?  @map("user_id")
+  organizationId  String?  @map("organization_id")
+  action          String   // login, logout, create_transaction, delete_account, etc.
+  resourceType    String?  @map("resource_type") // transaction, account, budget, etc.
+  resourceId      String?  @map("resource_id")
+  metadata        Json?    // additional context
+  ipAddress       String?  @map("ip_address")
+  userAgent       String?  @map("user_agent")
+  createdAt       DateTime @default(now()) @map("created_at")
 
   user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
 
   @@index([userId, createdAt(sort: Desc)])
+  @@index([organizationId, createdAt(sort: Desc)])
   @@index([resourceType, resourceId])
   @@map("audit_logs")
 }
